@@ -469,6 +469,121 @@
       color: #FFFFFF;
     }
 
+    /* SELETOR DE INDISPONIBILIDADE ANTES DE ROTEIRIZAR */
+    .availability-box {
+      background: var(--card-bg-strong);
+      border: 1.5px solid var(--border-white);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .availability-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .availability-header strong {
+      font-size: 0.98rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .availability-summary {
+      font-size: 0.84rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid var(--border-white);
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .availability-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    @media (min-width: 640px) {
+      .availability-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .driver-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-white);
+      background: rgba(255, 255, 255, 0.10);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      user-select: none;
+    }
+
+    .driver-toggle:hover {
+      background: rgba(255, 255, 255, 0.20);
+    }
+
+    .driver-toggle.unavailable {
+      background: rgba(185, 28, 28, 0.55);
+      border-color: #FCA5A5;
+      opacity: 0.88;
+    }
+
+    .driver-toggle-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .driver-toggle-text b {
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .driver-toggle-text span {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    .status-pill {
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid #FFFFFF;
+    }
+
+    .status-pill.ok {
+      background: var(--success-bg);
+      color: #FFFFFF;
+    }
+
+    .status-pill.off {
+      background: var(--danger-bg);
+      color: #FFFFFF;
+    }
+
     /* ÁREA DE ROTEIRIZAÇÃO */
     .upload-zone {
       border: 2px dashed #FFFFFF;
@@ -696,9 +811,24 @@
           <span>Roteirização Automática por DT</span>
         </div>
 
+        <!-- INDISPONIBILIDADE DE MOTORISTAS ANTES DO UPLOAD -->
+        <div class="availability-box">
+          <div class="availability-header">
+            <strong>
+              <i data-lucide="user-x" size="18"></i>
+              <span>1. Marcar Motoristas Indisponíveis</span>
+            </strong>
+            <span id="availability-counter" class="availability-summary">0 indisponíveis</span>
+          </div>
+          <p style="font-size: 0.83rem; color: var(--text-soft); margin-bottom: 10px;">
+            Toque nos motoristas que não vão rodar hoje para deixá-los fora do roteiro:
+          </p>
+          <div id="lista-indisponibilidade" class="availability-grid"></div>
+        </div>
+
         <label class="upload-zone" for="excel-input">
           <i data-lucide="upload-cloud" size="40"></i>
-          <strong style="font-size: 1.05rem;">Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
+          <strong style="font-size: 1.05rem;">2. Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
           <span style="font-size: 0.85rem; opacity: 0.9;">
             Leitura automática das colunas <b>DT</b> e <b>CX Convertida Parada</b>
           </span>
@@ -819,6 +949,8 @@
 
     let unidadeAtual = "";
     let frotaUnidade = [];
+    let indisponiveisIds = new Set();
+    let ultimoArquivoExcel = null;
     let workbookGerado = null;
     let nomeArquivoGerado = "";
 
@@ -855,6 +987,10 @@
     // SELEÇÃO DE UNIDADE
     async function selecionarUnidade(unidade) {
       unidadeAtual = unidade;
+      indisponiveisIds.clear();
+      ultimoArquivoExcel = null;
+      workbookGerado = null;
+
       document.getElementById("current-unit-label").textContent = unidade;
       document.getElementById("active-unit-bar").classList.remove("hidden");
       document.getElementById("view-unidades").classList.add("hidden");
@@ -869,6 +1005,9 @@
     function voltarSelecaoUnidade() {
       unidadeAtual = "";
       frotaUnidade = [];
+      indisponiveisIds.clear();
+      ultimoArquivoExcel = null;
+      workbookGerado = null;
       document.getElementById("active-unit-bar").classList.add("hidden");
       document.getElementById("view-sistema").classList.add("hidden");
       document.getElementById("view-unidades").classList.remove("hidden");
@@ -890,6 +1029,8 @@
       } else if (aba === "buscar") {
         document.getElementById("nav-buscar").classList.add("active");
         renderizarListaVeiculos(frotaUnidade);
+      } else if (aba === "roteirizar") {
+        renderizarSeletorIndisponibilidade();
       }
       lucide.createIcons();
     }
@@ -902,8 +1043,11 @@
         const json = await resp.json();
         if (json.status === "success") {
           frotaUnidade = json.veiculos || [];
+          const idsValidos = new Set(frotaUnidade.map(v => String(v.id)));
+          indisponiveisIds = new Set([...indisponiveisIds].filter(id => idsValidos.has(id)));
           localStorage.setItem(`rodalog_${unidadeAtual}`, JSON.stringify(frotaUnidade));
           renderizarListaVeiculos(frotaUnidade);
+          renderizarSeletorIndisponibilidade();
           mostrarToast(`Frota de ${unidadeAtual} sincronizada (${frotaUnidade.length} veículos).`);
         } else {
           mostrarToast(json.message || "Erro ao carregar frota.");
@@ -912,7 +1056,51 @@
         const local = localStorage.getItem(`rodalog_${unidadeAtual}`);
         frotaUnidade = local ? JSON.parse(local) : [];
         renderizarListaVeiculos(frotaUnidade);
+        renderizarSeletorIndisponibilidade();
         mostrarToast("Sem conexão com Drive; usando cache local.");
+      }
+    }
+
+    // SELETOR DE INDISPONIBILIDADE DE MOTORISTAS
+    function renderizarSeletorIndisponibilidade() {
+      const container = document.getElementById("lista-indisponibilidade");
+      const counter = document.getElementById("availability-counter");
+
+      const totalIndisp = indisponiveisIds.size;
+      const totalDisp = Math.max(0, frotaUnidade.length - totalIndisp);
+      counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disponível(is)`;
+
+      if (!frotaUnidade || frotaUnidade.length === 0) {
+        container.innerHTML = `<p style="font-size:0.85rem; opacity:0.85; padding: 6px;">Nenhum veículo cadastrado nesta unidade.</p>`;
+        return;
+      }
+
+      container.innerHTML = frotaUnidade.map(v => {
+        const idStr = String(v.id);
+        const isOff = indisponiveisIds.has(idStr);
+        return `
+          <div class="driver-toggle ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
+            <div class="driver-toggle-text">
+              <b>${v.motorista}</b>
+              <span>${v.placa} • ${v.tipo} (${v.capacidade} cx)</span>
+            </div>
+            <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "INDISPONÍVEL" : "DISPONÍVEL"}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function alternarIndisponibilidade(idStr) {
+      if (indisponiveisIds.has(idStr)) {
+        indisponiveisIds.delete(idStr);
+      } else {
+        indisponiveisIds.add(idStr);
+      }
+      renderizarSeletorIndisponibilidade();
+
+      // Se já houver um arquivo carregado, recalcula o roteiro automaticamente com a nova disponibilidade
+      if (ultimoArquivoExcel) {
+        executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
       }
     }
 
@@ -1003,6 +1191,7 @@
         });
         const json = await resp.json();
         if (json.status === "success") {
+          indisponiveisIds.delete(String(id));
           mostrarToast("Veículo deletado com sucesso!");
           await carregarFrotaDaUnidade();
         } else {
@@ -1056,147 +1245,157 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      if (frotaUnidade.length === 0) {
-        mostrarToast("Cadastre ao menos um veículo nesta unidade antes de roteirizar!");
+      const frotaAtiva = frotaUnidade.filter(v => !indisponiveisIds.has(String(v.id)));
+      if (frotaAtiva.length === 0) {
+        mostrarToast("Não há motoristas disponíveis para roteirizar!");
       }
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: "array" });
-          const firstSheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheetName];
-
-          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-          if (rows.length < 2) {
-            mostrarToast("A planilha está vazia ou inválida.");
-            return;
-          }
-
-          let headerRowIdx = 0;
-          let colDT = -1;
-          let colCX = -1;
-          let colPlaca = -1;
-          let colEntregador = -1;
-
-          for (let r = 0; r < Math.min(rows.length, 15); r++) {
-            const row = rows[r].map(cell => normalizarTexto(cell));
-            const idxDT = row.findIndex(c => c === "DT" || c === "ROTA" || c === "NUM DT" || c === "NUMERO DT");
-            if (idxDT !== -1) {
-              headerRowIdx = r;
-              colDT = idxDT;
-              colCX = row.findIndex(c =>
-                c.includes("CX CONVERTIDA PARADA") ||
-                c.includes("CAIXA CONVERTIDA PARADA") ||
-                c.includes("CX CONVERTIDA")
-              );
-              colPlaca = row.findIndex(c => c === "PLACA");
-              colEntregador = row.findIndex(c => c === "ENTREGADOR" || c === "MOTORISTA");
-              break;
-            }
-          }
-
-          if (colDT === -1 || colCX === -1) {
-            mostrarToast("Colunas 'DT' ou 'CX Convertida Parada' não encontradas no Excel!");
-            return;
-          }
-
-          if (colPlaca === -1) {
-            colPlaca = rows[headerRowIdx].length;
-            rows[headerRowIdx][colPlaca] = "PLACA";
-          }
-          if (colEntregador === -1) {
-            colEntregador = rows[headerRowIdx].length;
-            rows[headerRowIdx][colEntregador] = "ENTREGADOR";
-          }
-
-          const mapaDT = new Map();
-
-          for (let i = headerRowIdx + 1; i < rows.length; i++) {
-            const row = rows[i];
-            const dtRaw = String(row[colDT] || "").trim();
-            const dtNorm = normalizarTexto(dtRaw);
-
-            // Ignora linhas vazias ou linhas de totalizador/resumo
-            if (!dtNorm || dtNorm.includes("TOTAL") || dtNorm.includes("RESUMO") || dtNorm.includes("GERAL")) {
-              continue;
-            }
-
-            const cxVal = parseFloat(String(row[colCX] || "0").replace(",", ".")) || 0;
-
-            if (!mapaDT.has(dtRaw)) {
-              mapaDT.set(dtRaw, {
-                dt: dtRaw,
-                valoresCx: [],
-                linhasIndices: []
-              });
-            }
-
-            const grupo = mapaDT.get(dtRaw);
-            grupo.valoresCx.push(cxVal);
-            grupo.linhasIndices.push(i);
-          }
-
-          const rotasConsolidadas = [];
-          mapaDT.forEach(grupo => {
-            const soma = grupo.valoresCx.reduce((acc, v) => acc + v, 0);
-            rotasConsolidadas.push({
-              dt: grupo.dt,
-              totalCaixas: Math.round(soma * 100) / 100,
-              linhasIndices: grupo.linhasIndices,
-              veiculoAlocado: null
-            });
-          });
-
-          // Ordena rotas da maior carga para a menor carga
-          rotasConsolidadas.sort((a, b) => b.totalCaixas - a.totalCaixas);
-
-          // Ordena veículos da menor capacidade para a maior capacidade (menor veículo que comporte a carga)
-          const veiculosDisponiveis = [...frotaUnidade]
-            .map(v => ({ ...v, usado: false }))
-            .sort((a, b) => a.capacidade - b.capacidade);
-
-          const rotasNaoAtendidas = [];
-
-          rotasConsolidadas.forEach(rota => {
-            const veiculoIdeal = veiculosDisponiveis.find(
-              v => !v.usado && v.capacidade >= rota.totalCaixas
-            );
-
-            if (veiculoIdeal) {
-              veiculoIdeal.usado = true;
-              rota.veiculoAlocado = veiculoIdeal;
-
-              rota.linhasIndices.forEach(rowIdx => {
-                rows[rowIdx][colPlaca] = normalizarPlaca(veiculoIdeal.placa);
-                rows[rowIdx][colEntregador] = veiculoIdeal.motorista.toUpperCase().trim();
-              });
-            } else {
-              rota.linhasIndices.forEach(rowIdx => {
-                rows[rowIdx][colPlaca] = "";
-                rows[rowIdx][colEntregador] = "";
-              });
-              rotasNaoAtendidas.push(rota);
-            }
-          });
-
-          const newWorksheet = XLSX.utils.aoa_to_sheet(rows);
-          workbook.Sheets[firstSheetName] = newWorksheet;
-          workbookGerado = workbook;
-
-          const baseName = file.name.replace(/\.[^/.]+$/, "");
-          nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
-
-          renderizarResultadoRoteirizacao(rotasConsolidadas, rotasNaoAtendidas);
-          enviarBackupDrive(workbook, nomeArquivoGerado);
-        } catch (err) {
-          console.error(err);
-          mostrarToast("Erro ao ler o arquivo Excel. Verifique o formato.");
-        }
+        const buffer = new Uint8Array(e.target.result);
+        ultimoArquivoExcel = { buffer: buffer, fileName: file.name };
+        executarRoteirizacaoNoBuffer(buffer, file.name, true);
       };
 
       reader.readAsArrayBuffer(file);
+    }
+
+    function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
+      try {
+        const data = new Uint8Array(buffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+        if (rows.length < 2) {
+          mostrarToast("A planilha está vazia ou inválida.");
+          return;
+        }
+
+        let headerRowIdx = 0;
+        let colDT = -1;
+        let colCX = -1;
+        let colPlaca = -1;
+        let colEntregador = -1;
+
+        for (let r = 0; r < Math.min(rows.length, 15); r++) {
+          const row = rows[r].map(cell => normalizarTexto(cell));
+          const idxDT = row.findIndex(c => c === "DT" || c === "ROTA" || c === "NUM DT" || c === "NUMERO DT");
+          if (idxDT !== -1) {
+            headerRowIdx = r;
+            colDT = idxDT;
+            colCX = row.findIndex(c =>
+              c.includes("CX CONVERTIDA PARADA") ||
+              c.includes("CAIXA CONVERTIDA PARADA") ||
+              c.includes("CX CONVERTIDA")
+            );
+            colPlaca = row.findIndex(c => c === "PLACA");
+            colEntregador = row.findIndex(c => c === "ENTREGADOR" || c === "MOTORISTA");
+            break;
+          }
+        }
+
+        if (colDT === -1 || colCX === -1) {
+          mostrarToast("Colunas 'DT' ou 'CX Convertida Parada' não encontradas no Excel!");
+          return;
+        }
+
+        if (colPlaca === -1) {
+          colPlaca = rows[headerRowIdx].length;
+          rows[headerRowIdx][colPlaca] = "PLACA";
+        }
+        if (colEntregador === -1) {
+          colEntregador = rows[headerRowIdx].length;
+          rows[headerRowIdx][colEntregador] = "ENTREGADOR";
+        }
+
+        const mapaDT = new Map();
+
+        for (let i = headerRowIdx + 1; i < rows.length; i++) {
+          const row = rows[i];
+          const dtRaw = String(row[colDT] || "").trim();
+          const dtNorm = normalizarTexto(dtRaw);
+
+          // Ignora linhas vazias ou linhas de totalizador/resumo
+          if (!dtNorm || dtNorm.includes("TOTAL") || dtNorm.includes("RESUMO") || dtNorm.includes("GERAL")) {
+            continue;
+          }
+
+          const cxVal = parseFloat(String(row[colCX] || "0").replace(",", ".")) || 0;
+
+          if (!mapaDT.has(dtRaw)) {
+            mapaDT.set(dtRaw, {
+              dt: dtRaw,
+              valoresCx: [],
+              linhasIndices: []
+            });
+          }
+
+          const grupo = mapaDT.get(dtRaw);
+          grupo.valoresCx.push(cxVal);
+          grupo.linhasIndices.push(i);
+        }
+
+        const rotasConsolidadas = [];
+        mapaDT.forEach(grupo => {
+          const soma = grupo.valoresCx.reduce((acc, v) => acc + v, 0);
+          rotasConsolidadas.push({
+            dt: grupo.dt,
+            totalCaixas: Math.round(soma * 100) / 100,
+            linhasIndices: grupo.linhasIndices,
+            veiculoAlocado: null
+          });
+        });
+
+        // Ordena rotas da maior carga para a menor carga
+        rotasConsolidadas.sort((a, b) => b.totalCaixas - a.totalCaixas);
+
+        // Exclui motoristas/veículos marcados como indisponíveis e ordena da menor para a maior capacidade
+        const veiculosDisponiveis = frotaUnidade
+          .filter(v => !indisponiveisIds.has(String(v.id)))
+          .map(v => ({ ...v, usado: false }))
+          .sort((a, b) => a.capacidade - b.capacidade);
+
+        const rotasNaoAtendidas = [];
+
+        rotasConsolidadas.forEach(rota => {
+          const veiculoIdeal = veiculosDisponiveis.find(
+            v => !v.usado && v.capacidade >= rota.totalCaixas
+          );
+
+          if (veiculoIdeal) {
+            veiculoIdeal.usado = true;
+            rota.veiculoAlocado = veiculoIdeal;
+
+            rota.linhasIndices.forEach(rowIdx => {
+              rows[rowIdx][colPlaca] = normalizarPlaca(veiculoIdeal.placa);
+              rows[rowIdx][colEntregador] = veiculoIdeal.motorista.toUpperCase().trim();
+            });
+          } else {
+            rota.linhasIndices.forEach(rowIdx => {
+              rows[rowIdx][colPlaca] = "";
+              rows[rowIdx][colEntregador] = "";
+            });
+            rotasNaoAtendidas.push(rota);
+          }
+        });
+
+        const newWorksheet = XLSX.utils.aoa_to_sheet(rows);
+        workbook.Sheets[firstSheetName] = newWorksheet;
+        workbookGerado = workbook;
+
+        const baseName = originalFileName.replace(/\.[^/.]+$/, "");
+        nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
+
+        renderizarResultadoRoteirizacao(rotasConsolidadas, rotasNaoAtendidas);
+        if (salvarBackup) {
+          enviarBackupDrive(workbook, nomeArquivoGerado);
+        }
+      } catch (err) {
+        console.error(err);
+        mostrarToast("Erro ao ler o arquivo Excel. Verifique o formato.");
+      }
     }
 
     function renderizarResultadoRoteirizacao(rotas, naoAtendidas) {
