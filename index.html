@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Roteirizador Rodalog</title>
-  <!-- SheetJS para leitura e gravação real de arquivos Excel (.xlsx / .xls) -->
+  <!-- SheetJS para leitura e processamento rápido da planilha -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <!-- ExcelJS para editar células preservando layout, cores, linhas e estilos originais -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
   <!-- Ícones Lucide -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -830,7 +832,7 @@
           <i data-lucide="upload-cloud" size="40"></i>
           <strong style="font-size: 1.05rem;">2. Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
           <span style="font-size: 0.85rem; opacity: 0.9;">
-            Leitura automática das colunas <b>DT</b> e <b>CX Convertida Parada</b> (linha total da rota)
+            Preserva layout, cores e linhas • Lê <b>DT</b> e <b>CX Convertida Parada</b>
           </span>
           <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
         </label>
@@ -951,7 +953,7 @@
     let frotaUnidade = [];
     let indisponiveisIds = new Set();
     let ultimoArquivoExcel = null;
-    let workbookGerado = null;
+    let arquivoExportacaoPronto = null;
     let nomeArquivoGerado = "";
 
     // Inicializa ícones e Splash Screen de exatos 2 segundos
@@ -986,6 +988,9 @@
 
     function parseNumeroPlanilha(val) {
       if (typeof val === "number") return Number.isFinite(val) ? val : 0;
+      if (val && typeof val === "object" && "result" in val) {
+        return parseNumeroPlanilha(val.result);
+      }
       let s = String(val || "").trim();
       if (!s) return 0;
       s = s.replace(/\s+/g, "");
@@ -1007,7 +1012,7 @@
       unidadeAtual = unidade;
       indisponiveisIds.clear();
       ultimoArquivoExcel = null;
-      workbookGerado = null;
+      arquivoExportacaoPronto = null;
 
       document.getElementById("current-unit-label").textContent = unidade;
       document.getElementById("active-unit-bar").classList.remove("hidden");
@@ -1025,7 +1030,7 @@
       frotaUnidade = [];
       indisponiveisIds.clear();
       ultimoArquivoExcel = null;
-      workbookGerado = null;
+      arquivoExportacaoPronto = null;
       document.getElementById("active-unit-bar").classList.add("hidden");
       document.getElementById("view-sistema").classList.add("hidden");
       document.getElementById("view-unidades").classList.remove("hidden");
@@ -1256,7 +1261,7 @@
     }
 
     // =========================================================================
-    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL
+    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL (PRESERVANDO LAYOUT ORIGINAL)
     // =========================================================================
     function processarArquivoExcel(event) {
       const file = event.target.files[0];
@@ -1277,14 +1282,19 @@
       reader.readAsArrayBuffer(file);
     }
 
-    function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
-      try {
-        const data = new Uint8Array(buffer);
-        const workbook = XLSX.read(data, { type: "array", cellStyles: true });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
+    function corEhAmarela(fill) {
+      if (!fill || !fill.fgColor) return false;
+      const argb = String(fill.fgColor.argb || fill.fgColor.rgb || "").toUpperCase();
+      return argb.endsWith("FFFF00") || argb.endsWith("FFF2CC") || argb.endsWith("FFE699") || argb.endsWith("FFEB9C");
+    }
 
-        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+    async function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
+      try {
+        const workbookXlsx = XLSX.read(buffer, { type: "array" });
+        const firstSheetName = workbookXlsx.SheetNames[0];
+        const worksheetXlsx = workbookXlsx.Sheets[firstSheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheetXlsx, { header: 1, defval: "" });
+
         if (rows.length < 2) {
           mostrarToast("A planilha está vazia ou inválida.");
           return;
@@ -1320,21 +1330,15 @@
 
         if (colPlaca === -1) {
           colPlaca = rows[headerRowIdx].length;
-          rows[headerRowIdx][colPlaca] = "PLACA";
         }
         if (colEntregador === -1) {
-          colEntregador = rows[headerRowIdx].length;
-          rows[headerRowIdx][colEntregador] = "ENTREGADOR";
+          colEntregador = Math.max(rows[headerRowIdx].length, colPlaca + 1);
         }
 
-        function isCelulaAmarela(rowIdx, colIdx) {
-          const addr = XLSX.utils.encode_cell({ r: rowIdx, c: colIdx });
-          const cell = worksheet[addr];
-          const rgb = cell && cell.s && cell.s.fgColor && cell.s.fgColor.rgb
-            ? String(cell.s.fgColor.rgb).toUpperCase()
-            : "";
-          return rgb.includes("FFFF") || rgb.includes("FFF2") || rgb.includes("FFE6") || rgb.includes("FFEB");
-        }
+        // Carrega com ExcelJS para ler cores e gravar mantendo o layout original
+        const wbExcelJs = new ExcelJS.Workbook();
+        await wbExcelJs.xlsx.load(buffer.slice().buffer);
+        const wsExcelJs = wbExcelJs.worksheets[0];
 
         const rotasMap = new Map();
         let ultimaRotaAtiva = null;
@@ -1344,17 +1348,17 @@
           const dtRaw = String(row[colDT] || "").trim();
           const dtNorm = normalizarTexto(dtRaw);
           const cxVal = parseNumeroPlanilha(row[colCX]);
-          const linhaTemAmarelo = isCelulaAmarela(i, colCX);
 
-          // Linha com DT preenchida: faz parte da rota e receberá PLACA e ENTREGADOR
+          const cellExcelJs = wsExcelJs ? wsExcelJs.getRow(i + 1).getCell(colCX + 1) : null;
+          const linhaTemAmarelo = cellExcelJs ? corEhAmarela(cellExcelJs.fill) : false;
+
           if (dtRaw && !dtNorm.startsWith("TOTAL") && !dtNorm.startsWith("RESUMO") && !dtNorm.startsWith("SUBTOTAL")) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
                 dt: dtRaw,
                 valoresParada: [],
                 valorLinhaAmarela: null,
-                linhasDT: [],
-                linhasSubtotal: []
+                linhasDT: []
               });
             }
             const grupo = rotasMap.get(dtRaw);
@@ -1368,15 +1372,11 @@
             continue;
           }
 
-          // Linha sem DT (linha amarela de total da rota): garante que não receba motorista/placa
-          rows[i][colPlaca] = "";
-          rows[i][colEntregador] = "";
-
+          // Linha sem DT (linha amarela de subtotal/total da rota): usa apenas para o total da rota
           if (ultimaRotaAtiva && cxVal > 0 && !dtNorm.includes("GERAL")) {
             const somaParadas = ultimaRotaAtiva.valoresParada.reduce((acc, v) => acc + v, 0);
             if (linhaTemAmarelo || cxVal >= somaParadas || ultimaRotaAtiva.valoresParada.length > 0) {
               ultimaRotaAtiva.valorLinhaAmarela = cxVal;
-              ultimaRotaAtiva.linhasSubtotal.push(i);
               ultimaRotaAtiva = null;
             }
           }
@@ -1424,34 +1424,52 @@
           if (veiculoIdeal) {
             veiculoIdeal.usado = true;
             rota.veiculoAlocado = veiculoIdeal;
-
-            rota.linhasDT.forEach(rowIdx => {
-              rows[rowIdx][colPlaca] = normalizarPlaca(veiculoIdeal.placa);
-              rows[rowIdx][colEntregador] = veiculoIdeal.motorista.toUpperCase().trim();
-            });
           } else {
-            rota.linhasDT.forEach(rowIdx => {
-              rows[rowIdx][colPlaca] = "";
-              rows[rowIdx][colEntregador] = "";
-            });
             rotasNaoAtendidas.push(rota);
           }
         });
 
-        const newWorksheet = XLSX.utils.aoa_to_sheet(rows);
-        workbook.Sheets[firstSheetName] = newWorksheet;
-        workbookGerado = workbook;
+        // Grava no ExcelJS preservando estilos existentes das células
+        if (wsExcelJs) {
+          const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
+          const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
+          const cellHdrEntr = headerRow.getCell(colEntregador + 1);
+          if (!String(cellHdrPlaca.value || "").trim()) cellHdrPlaca.value = "PLACA";
+          if (!String(cellHdrEntr.value || "").trim()) cellHdrEntr.value = "ENTREGADOR";
+
+          for (let i = headerRowIdx + 1; i < rows.length; i++) {
+            const rObj = wsExcelJs.getRow(i + 1);
+            rObj.getCell(colPlaca + 1).value = null;
+            rObj.getCell(colEntregador + 1).value = null;
+          }
+
+          rotasConsolidadas.forEach(rota => {
+            if (rota.veiculoAlocado) {
+              const placaFmt = normalizarPlaca(rota.veiculoAlocado.placa);
+              const motoristaFmt = rota.veiculoAlocado.motorista.toUpperCase().trim();
+
+              rota.linhasDT.forEach(rowIdx => {
+                const rObj = wsExcelJs.getRow(rowIdx + 1);
+                rObj.getCell(colPlaca + 1).value = placaFmt;
+                rObj.getCell(colEntregador + 1).value = motoristaFmt;
+              });
+            }
+          });
+        }
+
+        const outBuffer = await wbExcelJs.xlsx.writeBuffer();
+        arquivoExportacaoPronto = new Uint8Array(outBuffer);
 
         const baseName = originalFileName.replace(/\.[^/.]+$/, "");
         nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
 
         renderizarResultadoRoteirizacao(rotasConsolidadas, rotasNaoAtendidas);
         if (salvarBackup) {
-          enviarBackupDrive(workbook, nomeArquivoGerado);
+          enviarBackupDrive(arquivoExportacaoPronto, nomeArquivoGerado);
         }
       } catch (err) {
         console.error(err);
-        mostrarToast("Erro ao ler o arquivo Excel. Verifique o formato.");
+        mostrarToast("Erro ao processar o arquivo Excel. Verifique o formato.");
       }
     }
 
@@ -1504,14 +1522,33 @@
     }
 
     function baixarExcelAtualizado() {
-      if (!workbookGerado) return;
-      XLSX.writeFile(workbookGerado, nomeArquivoGerado);
+      if (!arquivoExportacaoPronto) return;
+      const blob = new Blob([arquivoExportacaoPronto], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nomeArquivoGerado;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       mostrarToast("Download do Excel iniciado!");
     }
 
-    async function enviarBackupDrive(workbook, fileName) {
+    function uint8ToBase64(u8Arr) {
+      let chunk = 0x8000;
+      let result = "";
+      for (let i = 0; i < u8Arr.length; i += chunk) {
+        result += String.fromCharCode.apply(null, u8Arr.subarray(i, i + chunk));
+      }
+      return btoa(result);
+    }
+
+    async function enviarBackupDrive(u8Buffer, fileName) {
       try {
-        const wbBase64 = XLSX.write(workbook, { bookType: "xlsx", type: "base64" });
+        const wbBase64 = uint8ToBase64(u8Buffer);
         await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({
