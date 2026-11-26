@@ -4,15 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Roteirizador Rodalog</title>
-  <!-- Fontes modernas -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- SheetJS para leitura e processamento rápido da planilha -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-  <!-- ExcelJS para editar células preservando layout, cores, linhas e estilos originais -->
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-  <!-- Ícones Lucide -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
@@ -27,12 +23,7 @@
       --border-subtle: rgba(255, 255, 255, 0.24);
       --border-strong: rgba(255, 255, 255, 0.52);
       --text-main: #FFFFFF;
-      --text-soft: rgba(255, 255, 255, 0.84);
-      --success: #10B981;
-      --success-bg: rgba(16, 185, 129, 0.24);
-      --danger: #EF4444;
-      --danger-bg: rgba(220, 38, 38, 0.34);
-      --warning-bg: rgba(245, 158, 11, 0.28);
+      --text-soft: rgba(255, 255, 255, 0.82);
       --radius-xl: 24px;
       --radius-lg: 16px;
       --radius-md: 12px;
@@ -65,7 +56,7 @@
       overflow-x: hidden;
     }
 
-    /* SPLASH SCREEN 2 SEGUNDOS */
+    /* SPLASH SCREEN */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -128,16 +119,16 @@
     /* CONTAINER PRINCIPAL */
     .app-wrapper {
       width: 100%;
-      max-width: 1000px;
-      padding: 22px 18px 36px;
+      max-width: 960px;
+      padding: 22px 18px 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 22px;
+      gap: 20px;
       flex: 1;
     }
 
-    /* HEADER MODERNO */
+    /* HEADER LIMPO */
     header {
       width: 100%;
       display: flex;
@@ -149,22 +140,15 @@
     }
 
     .main-logo {
-      width: min(82vw, 390px);
-      max-height: clamp(140px, 23vw, 210px);
+      width: min(80vw, 360px);
+      max-height: clamp(130px, 21vw, 195px);
       height: auto;
       object-fit: contain;
       filter: drop-shadow(0 12px 24px rgba(85, 20, 0, 0.28));
     }
 
-    .title-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-    }
-
     .system-title {
-      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      font-size: clamp(1.3rem, 2.8vw, 1.8rem);
       font-weight: 800;
       letter-spacing: 0.8px;
       text-transform: uppercase;
@@ -172,26 +156,20 @@
       text-shadow: 0 3px 14px rgba(105, 24, 0, 0.32);
     }
 
-    .system-subtitle {
-      font-size: 0.86rem;
-      color: var(--text-soft);
-      font-weight: 600;
-    }
-
     .unit-badge-bar {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 10px;
       background: var(--glass-elevated);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border-strong);
-      padding: 7px 10px 7px 18px;
+      padding: 6px 8px 6px 16px;
       border-radius: 999px;
       font-size: 0.86rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.4px;
       box-shadow: 0 10px 26px rgba(90, 20, 0, 0.24);
     }
 
@@ -208,21 +186,20 @@
       color: var(--orange-ink);
       border: none;
       border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 0.75rem;
+      padding: 5px 13px;
+      font-size: 0.72rem;
       font-weight: 800;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.4px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .btn-change-unit:hover {
       transform: scale(1.04);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
 
-    /* PAINÉIS GLASSMORPHISM SOBRE LARANJA */
+    /* PAINÉIS */
     .panel {
       width: 100%;
       background: var(--glass-surface);
@@ -230,7 +207,7 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 26px 22px;
+      padding: 24px 20px;
       box-shadow: 0 20px 45px rgba(92, 22, 0, 0.28);
     }
 
@@ -239,14 +216,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
     .panel-title {
-      font-size: 1.06rem;
+      font-size: 1rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -257,8 +233,8 @@
     }
 
     .panel-title-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.16);
       border: 1px solid var(--border-subtle);
@@ -285,13 +261,12 @@
     }
 
     .unit-card {
-      position: relative;
       background: var(--glass-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 24px 14px;
+      padding: 22px 14px;
       color: #FFFFFF;
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 800;
       letter-spacing: 0.5px;
       cursor: pointer;
@@ -299,9 +274,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-      overflow: hidden;
+      gap: 11px;
+      transition: all 0.2s ease;
     }
 
     .unit-card:hover, .unit-card:active {
@@ -313,8 +287,8 @@
     }
 
     .unit-card-icon {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.14);
       border: 1px solid var(--border-subtle);
@@ -322,17 +296,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+      transition: all 0.2s ease;
     }
 
     .unit-card:hover .unit-card-icon {
       background: rgba(255, 94, 0, 0.14);
       border-color: rgba(255, 94, 0, 0.3);
       color: var(--orange-main);
-      transform: scale(1.06);
     }
 
-    /* NAVEGAÇÃO PRINCIPAL DA UNIDADE */
+    /* NAVEGAÇÃO */
     .main-actions {
       width: 100%;
       display: flex;
@@ -343,13 +316,13 @@
     .nav-bar-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
     }
 
     @media (min-width: 640px) {
       .nav-bar-grid {
-        grid-template-columns: 1.35fr 1fr 1fr;
+        grid-template-columns: 1.3fr 1fr 1fr;
       }
     }
 
@@ -358,8 +331,8 @@
       color: var(--orange-ink);
       border: 1.5px solid #FFFFFF;
       border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      font-size: 1.08rem;
+      padding: 16px 20px;
+      font-size: 1.02rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.6px;
@@ -382,8 +355,8 @@
       color: #FFFFFF;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 16px 14px;
-      font-size: 0.92rem;
+      padding: 15px 14px;
+      font-size: 0.9rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -404,16 +377,15 @@
       background: rgba(255, 255, 255, 0.24);
       border-color: #FFFFFF;
       color: #FFFFFF;
-      box-shadow: 0 8px 20px rgba(88, 20, 0, 0.22);
     }
 
-    /* STEPPER / PASSOS DA ROTEIRIZAÇÃO */
+    /* PASSOS DA ROTEIRIZAÇÃO */
     .step-card {
       background: var(--glass-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .step-header {
@@ -422,26 +394,26 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .step-title {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
 
     .step-number {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
       background: #FFFFFF;
       color: var(--orange-ink);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -453,16 +425,15 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .availability-summary {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       background: rgba(255, 255, 255, 0.14);
       border: 1px solid var(--border-subtle);
       color: #FFFFFF;
-      padding: 5px 12px;
+      padding: 4px 11px;
       border-radius: 999px;
     }
 
@@ -471,14 +442,14 @@
       border: 1px solid var(--border-strong);
       color: #FFFFFF;
       border-radius: 999px;
-      padding: 5px 11px;
-      font-size: 0.72rem;
+      padding: 4px 10px;
+      font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: background 0.15s ease;
     }
 
@@ -493,7 +464,7 @@
 
     .mini-filter-wrap input {
       width: 100%;
-      padding: 10px 14px 10px 38px;
+      padding: 10px 14px 10px 36px;
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
@@ -505,7 +476,7 @@
     }
 
     .mini-filter-wrap input::placeholder {
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .mini-filter-wrap input:focus {
@@ -517,20 +488,20 @@
       left: 12px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.75);
+      color: rgba(255, 255, 255, 0.7);
     }
 
     .availability-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 9px;
-      max-height: 260px;
+      gap: 8px;
+      max-height: 250px;
       overflow-y: auto;
       padding-right: 4px;
     }
 
     .availability-grid::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
 
     .availability-grid::-webkit-scrollbar-thumb {
@@ -549,7 +520,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 11px 13px;
+      padding: 10px 12px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: rgba(255, 255, 255, 0.08);
@@ -571,12 +542,12 @@
     .driver-toggle-text {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       min-width: 0;
     }
 
     .driver-toggle-text b {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: #FFFFFF;
       white-space: nowrap;
       overflow: hidden;
@@ -584,18 +555,18 @@
     }
 
     .driver-toggle-text span {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       color: var(--text-soft);
       font-weight: 600;
     }
 
     .status-pill {
       flex-shrink: 0;
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.4px;
-      padding: 4px 10px;
+      padding: 4px 9px;
       border-radius: 999px;
     }
 
@@ -611,32 +582,31 @@
       border: 1px solid rgba(255, 255, 255, 0.4);
     }
 
-    /* ÁREA DE UPLOAD DRAG & DROP */
+    /* UPLOAD */
     .upload-zone {
       position: relative;
-      border: 2px dashed rgba(255, 255, 255, 0.58);
+      border: 2px dashed rgba(255, 255, 255, 0.54);
       border-radius: var(--radius-lg);
-      padding: 32px 20px;
+      padding: 28px 18px;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(14, 5, 1, 0.32) 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(14, 5, 1, 0.30) 100%);
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       transition: all 0.2s ease;
     }
 
     .upload-zone:hover, .upload-zone.dragover {
       border-color: #FFFFFF;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 5, 1, 0.38) 100%);
-      transform: translateY(-1px);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(14, 5, 1, 0.36) 100%);
     }
 
     .upload-icon-circle {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       background: #FFFFFF;
       color: var(--orange-ink);
       display: flex;
@@ -652,7 +622,7 @@
       background: rgba(16, 185, 129, 0.24);
       border: 1px solid rgba(52, 211, 153, 0.6);
       color: #ECFDF5;
-      padding: 5px 12px;
+      padding: 4px 12px;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -680,14 +650,14 @@
       background: var(--glass-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 14px;
+      padding: 13px 14px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .kpi-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--text-soft);
@@ -695,18 +665,18 @@
     }
 
     .kpi-value {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #FFFFFF;
     }
 
     .alert-box {
-      margin-top: 16px;
-      padding: 15px 16px;
+      margin-top: 14px;
+      padding: 13px 15px;
       border-radius: var(--radius-md);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .alert-warning {
@@ -721,16 +691,10 @@
       color: #ECFDF5;
     }
 
-    .alert-danger {
-      background: rgba(153, 27, 27, 0.68);
-      border: 1px solid #FCA5A5;
-      color: #FEF2F2;
-    }
-
     .table-responsive {
       width: 100%;
       overflow-x: auto;
-      margin-top: 16px;
+      margin-top: 14px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-elevated);
@@ -739,12 +703,12 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       text-align: left;
     }
 
     th, td {
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       white-space: nowrap;
     }
@@ -753,7 +717,7 @@
       background: rgba(0, 0, 0, 0.28);
       font-weight: 800;
       text-transform: uppercase;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       letter-spacing: 0.5px;
       color: var(--text-soft);
     }
@@ -765,34 +729,32 @@
     .tag-ok {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
       background: rgba(16, 185, 129, 0.26);
       color: #A7F3D0;
       border: 1px solid rgba(52, 211, 153, 0.55);
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
     }
 
     .tag-pend {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
       background: rgba(220, 38, 38, 0.36);
       color: #FECACA;
       border: 1px solid rgba(248, 113, 113, 0.55);
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
     }
 
-    /* FORMULÁRIOS E INPUTS */
+    /* FORMULÁRIOS */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
+      gap: 14px;
     }
 
     @media (min-width: 640px) {
@@ -804,11 +766,11 @@
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
     }
 
     .form-group label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -817,19 +779,19 @@
 
     .form-group input, .form-group select {
       width: 100%;
-      padding: 13px 15px;
+      padding: 13px 14px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
       color: #FFFFFF;
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 700;
       outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: border-color 0.15s ease;
     }
 
     .form-group input::placeholder {
-      color: rgba(255, 255, 255, 0.55);
+      color: rgba(255, 255, 255, 0.5);
       font-weight: 500;
     }
 
@@ -840,24 +802,23 @@
 
     .form-group input:focus, .form-group select:focus {
       border-color: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
     }
 
     .btn-row {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 18px;
       justify-content: center;
     }
 
     .btn-action {
       flex: 1;
-      min-width: 170px;
+      min-width: 160px;
       padding: 14px 18px;
       border-radius: var(--radius-md);
       border: 1px solid transparent;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -901,21 +862,21 @@
       transform: translateY(-1px);
     }
 
-    /* LISTA / BUSCA DE VEÍCULOS */
+    /* BUSCA DE VEÍCULOS */
     .search-box {
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       position: relative;
     }
 
     .search-box input {
       width: 100%;
-      padding: 14px 16px 14px 44px;
+      padding: 13px 16px 13px 42px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
       color: #FFFFFF;
-      font-size: 0.96rem;
+      font-size: 0.94rem;
       font-weight: 600;
       outline: none;
       transition: border-color 0.15s ease;
@@ -926,7 +887,7 @@
     }
 
     .search-box input::placeholder {
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .search-box svg {
@@ -934,7 +895,7 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.75);
+      color: rgba(255, 255, 255, 0.72);
     }
 
     .vehicle-list {
@@ -947,24 +908,23 @@
       background: var(--glass-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 14px 16px;
+      padding: 13px 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      transition: border-color 0.16s ease, background 0.16s ease;
+      transition: border-color 0.16s ease;
     }
 
     .vehicle-item:hover {
       border-color: var(--border-strong);
-      background: rgba(18, 7, 1, 0.54);
     }
 
     .vehicle-info {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
 
     .vehicle-title-row {
@@ -977,20 +937,19 @@
     .plate-badge {
       background: #FFFFFF;
       color: var(--orange-ink);
-      padding: 2px 9px;
+      padding: 2px 8px;
       border-radius: 6px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 800;
       letter-spacing: 0.4px;
     }
 
     .vehicle-info strong {
-      font-size: 0.98rem;
-      letter-spacing: 0.3px;
+      font-size: 0.96rem;
     }
 
     .vehicle-info span {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-soft);
       font-weight: 600;
     }
@@ -1001,21 +960,16 @@
     }
 
     .btn-mini {
-      padding: 8px 12px;
-      border-radius: 9px;
+      padding: 7px 11px;
+      border-radius: 8px;
       border: 1px solid transparent;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 800;
       cursor: pointer;
       text-transform: uppercase;
       display: flex;
       align-items: center;
       gap: 5px;
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-
-    .btn-mini:hover {
-      filter: brightness(1.06);
     }
 
     .btn-mini-edit {
@@ -1033,8 +987,8 @@
     footer.signature-footer {
       width: 100%;
       text-align: center;
-      padding: 14px 16px 28px;
-      font-size: 0.86rem;
+      padding: 12px 16px 24px;
+      font-size: 0.84rem;
       font-weight: 600;
       color: var(--text-soft);
       margin-top: auto;
@@ -1046,18 +1000,13 @@
       text-decoration: none;
       border-bottom: 1.5px solid rgba(255, 255, 255, 0.65);
       padding-bottom: 1px;
-      transition: opacity 0.15s ease;
-    }
-
-    footer.signature-footer a:hover {
-      opacity: 0.82;
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* TOAST NOTIFICAÇÃO */
+    /* TOAST */
     #toast {
       position: fixed;
       bottom: 24px;
@@ -1067,10 +1016,10 @@
       backdrop-filter: blur(12px);
       color: #FFFFFF;
       border: 1px solid var(--border-strong);
-      padding: 12px 22px;
+      padding: 11px 20px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       z-index: 10000;
       box-shadow: 0 14px 32px rgba(70, 16, 0, 0.45);
       opacity: 0;
@@ -1088,145 +1037,127 @@
 </head>
 <body>
 
-  <!-- TELA INICIAL (SPLASH 2 SEGUNDOS) -->
+  <!-- SPLASH SCREEN -->
   <div id="splash-screen">
     <img src="logo.png" alt="Rodalog Logo" />
     <div class="splash-loader"></div>
   </div>
 
-  <!-- NOTIFICAÇÃO FLUTUANTE -->
+  <!-- NOTIFICAÇÃO -->
   <div id="toast"></div>
 
   <div class="app-wrapper">
     <!-- TOPO -->
     <header>
       <img src="logo.png" alt="Roteirizador Rodalog" class="main-logo" />
-      <div class="title-group">
-        <h1 class="system-title">Roteirizador Rodalog</h1>
-        <p class="system-subtitle">Alocação inteligente de frota por DT e capacidade</p>
-      </div>
+      <h1 class="system-title">Roteirizador Rodalog</h1>
 
       <div id="active-unit-bar" class="unit-badge-bar hidden">
         <span class="unit-dot"></span>
-        <span>UNIDADE: <strong id="current-unit-label">-</strong></span>
+        <span id="current-unit-label">-</span>
         <button class="btn-change-unit" onclick="voltarSelecaoUnidade()">Trocar</button>
       </div>
     </header>
 
-    <!-- TELA 1: ESCOLHA A UNIDADE -->
+    <!-- TELA 1: UNIDADES -->
     <section id="view-unidades" class="panel">
       <div class="panel-header">
         <div class="panel-title">
-          <span class="panel-title-icon"><i data-lucide="map-pin" size="18"></i></span>
-          <span>Selecione a Operação / Unidade</span>
+          <span class="panel-title-icon"><i data-lucide="map-pin" size="17"></i></span>
+          <span>Selecione a Unidade</span>
         </div>
       </div>
 
       <div class="units-grid">
         <button class="unit-card" onclick="selecionarUnidade('MIX POA')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>MIX POA</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('PELOTAS')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>PELOTAS</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('CHAPECO')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>CHAPECO</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('FLORIANOPOLIS')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>FLORIANOPOLIS</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('IJUI')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>IJUI</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('SANTA MARIA')">
-          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="21"></i></span>
           <span>SANTA MARIA</span>
         </button>
       </div>
     </section>
 
-    <!-- TELA 2: SISTEMA DA UNIDADE SELECIONADA -->
+    <!-- TELA 2: SISTEMA -->
     <main id="view-sistema" class="main-actions hidden">
-      <!-- MENU DE NAVEGAÇÃO -->
       <div class="nav-bar-grid">
         <button id="nav-roteirizar" class="btn-hero-roteirizar" onclick="abrirAba('roteirizar')">
-          <i data-lucide="route" size="22"></i>
+          <i data-lucide="route" size="20"></i>
           <span>Roteirizar</span>
         </button>
         <button id="nav-cadastrar" class="btn-secondary-nav" onclick="abrirAba('cadastrar', true)">
-          <i data-lucide="truck" size="19"></i>
+          <i data-lucide="truck" size="18"></i>
           <span>Cadastrar Veículo</span>
         </button>
         <button id="nav-buscar" class="btn-secondary-nav" onclick="abrirAba('buscar')">
-          <i data-lucide="search" size="19"></i>
+          <i data-lucide="search" size="18"></i>
           <span>Buscar Veículo</span>
         </button>
       </div>
 
-      <!-- SUBTELA A: ROTEIRIZAR (PRINCIPAL) -->
+      <!-- ABA ROTEIRIZAR -->
       <section id="tab-roteirizar" class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span class="panel-title-icon"><i data-lucide="file-spreadsheet" size="18"></i></span>
-            <span>Roteirização Automática por DT</span>
-          </div>
-        </div>
-
-        <!-- PASSO 1: INDISPONIBILIDADE DE MOTORISTAS -->
+        <!-- PASSO 1: FROTA -->
         <div class="step-card">
           <div class="step-header">
             <div class="step-title">
               <span class="step-number">1</span>
-              <span>Disponibilidade da Frota Hoje</span>
+              <span>Disponibilidade</span>
             </div>
             <div class="step-badges-right">
-              <span id="availability-counter" class="availability-summary">0 indisponíveis</span>
+              <span id="availability-counter" class="availability-summary">0 disponíveis</span>
               <button id="btn-restaurar-motoristas" class="btn-reset-drivers hidden" onclick="restaurarTodosMotoristas()">
-                <i data-lucide="rotate-ccw" size="12"></i> Restaurar todos
+                <i data-lucide="rotate-ccw" size="12"></i> Restaurar
               </button>
             </div>
           </div>
 
-          <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px;">
-            Toque nos motoristas que <b>não vão rodar hoje</b> para deixá-los fora da roteirização:
-          </p>
-
           <div class="mini-filter-wrap">
-            <i data-lucide="search" size="16"></i>
+            <i data-lucide="search" size="15"></i>
             <input type="text" id="filtro-indisponibilidade" placeholder="Filtrar motorista ou placa..." oninput="renderizarSeletorIndisponibilidade()" />
           </div>
 
           <div id="lista-indisponibilidade" class="availability-grid"></div>
         </div>
 
-        <!-- PASSO 2: IMPORTAR PLANILHA -->
+        <!-- PASSO 2: EXCEL -->
         <div class="step-card" style="margin-bottom: 0;">
           <div class="step-header">
             <div class="step-title">
               <span class="step-number">2</span>
-              <span>Importar Planilha do Cliente</span>
+              <span>Planilha Excel</span>
             </div>
           </div>
 
           <label id="drop-zone" class="upload-zone" for="excel-input">
             <div class="upload-icon-circle">
-              <i data-lucide="upload-cloud" size="28"></i>
+              <i data-lucide="upload-cloud" size="25"></i>
             </div>
-            <strong id="upload-title-text" style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
+            <strong id="upload-title-text" style="font-size: 0.98rem; color: #FFFFFF;">Selecionar ou arrastar arquivo (.xlsx / .xls)</strong>
             <span id="loaded-file-badge" class="loaded-file-pill hidden"></span>
-            <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 540px;">
-              Mantém cores, bordas e layout originais • Lê <b>DT numérica</b> e total da rota (<b>R / AS</b>), ignorando linhas <b>TOTAL</b>
-            </span>
             <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
           </label>
         </div>
 
-        <!-- RESULTADOS DA ROTEIRIZAÇÃO -->
+        <!-- RESULTADOS -->
         <div id="routing-result-area" class="hidden">
           <div id="routing-kpis" class="kpi-grid"></div>
           <div id="routing-alert" class="alert-box"></div>
@@ -1235,10 +1166,10 @@
             <table>
               <thead>
                 <tr>
-                  <th>DT (Rota)</th>
-                  <th>Total Carga (CX)</th>
+                  <th>DT</th>
+                  <th>Caixas</th>
                   <th>Placa</th>
-                  <th>Entregador</th>
+                  <th>Motorista</th>
                   <th>Capacidade</th>
                   <th>Status</th>
                 </tr>
@@ -1249,22 +1180,22 @@
 
           <div class="btn-row">
             <button class="btn-action btn-save" onclick="baixarExcelAtualizado()">
-              <i data-lucide="download" size="19"></i>
-              <span>Baixar Excel Roteirizado</span>
+              <i data-lucide="download" size="18"></i>
+              <span>Baixar Excel</span>
             </button>
             <button class="btn-action btn-cancel" onclick="limparRoteirizacao()">
-              <i data-lucide="rotate-ccw" size="19"></i>
-              <span>Limpar / Nova Roteirização</span>
+              <i data-lucide="rotate-ccw" size="18"></i>
+              <span>Limpar</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- SUBTELA B: CADASTRAR / EDITAR VEÍCULO -->
+      <!-- ABA CADASTRAR / EDITAR -->
       <section id="tab-cadastrar" class="panel hidden">
         <div class="panel-header">
           <div class="panel-title">
-            <span class="panel-title-icon"><i data-lucide="plus-circle" size="18"></i></span>
+            <span class="panel-title-icon"><i data-lucide="plus-circle" size="17"></i></span>
             <span id="form-veiculo-titulo">Cadastrar Veículo</span>
           </div>
         </div>
@@ -1273,17 +1204,17 @@
 
         <div class="form-grid">
           <div class="form-group">
-            <label for="veiculo-motorista">Nome do Motorista / Entregador</label>
-            <input type="text" id="veiculo-motorista" placeholder="EX: JOAO SILVA" style="text-transform: uppercase;" />
+            <label for="veiculo-motorista">Motorista</label>
+            <input type="text" id="veiculo-motorista" placeholder="NOME COMPLETO" style="text-transform: uppercase;" />
           </div>
 
           <div class="form-group">
-            <label for="veiculo-placa">Placa (Sem Traço)</label>
-            <input type="text" id="veiculo-placa" class="mono" maxlength="7" placeholder="EX: ABC1D23" style="text-transform: uppercase;" />
+            <label for="veiculo-placa">Placa</label>
+            <input type="text" id="veiculo-placa" class="mono" maxlength="7" placeholder="ABC1D23" style="text-transform: uppercase;" />
           </div>
 
           <div class="form-group">
-            <label for="veiculo-tipo">Tipo de Veículo</label>
+            <label for="veiculo-tipo">Veículo</label>
             <select id="veiculo-tipo">
               <option value="VAN">VAN</option>
               <option value="VUC">VUC</option>
@@ -1295,46 +1226,39 @@
           </div>
 
           <div class="form-group">
-            <label for="veiculo-capacidade">Qtd. Média de Caixas que Cabe</label>
-            <input type="number" id="veiculo-capacidade" class="mono" min="1" placeholder="EX: 350" />
+            <label for="veiculo-capacidade">Capacidade (Caixas)</label>
+            <input type="number" id="veiculo-capacidade" class="mono" min="1" placeholder="350" />
           </div>
         </div>
 
         <div class="btn-row">
           <button class="btn-action btn-save" onclick="salvarVeiculo()">
-            <i data-lucide="save" size="18"></i>
-            <span>Salvar Veículo</span>
+            <i data-lucide="save" size="17"></i>
+            <span>Salvar</span>
           </button>
           <button id="btn-form-editar-novo" class="btn-action btn-cancel hidden" onclick="limparFormularioVeiculo()">
-            <i data-lucide="rotate-ccw" size="18"></i>
-            <span>Limpar / Novo</span>
+            <i data-lucide="rotate-ccw" size="17"></i>
+            <span>Limpar</span>
           </button>
           <button id="btn-form-deletar" class="btn-action btn-delete hidden" onclick="deletarVeiculoAtual()">
-            <i data-lucide="trash-2" size="18"></i>
+            <i data-lucide="trash-2" size="17"></i>
             <span>Deletar</span>
           </button>
         </div>
       </section>
 
-      <!-- SUBTELA C: BUSCAR VEÍCULO -->
+      <!-- ABA BUSCAR -->
       <section id="tab-buscar" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span class="panel-title-icon"><i data-lucide="search" size="18"></i></span>
-            <span>Frota Cadastrada da Unidade</span>
-          </div>
-        </div>
-
         <div class="search-box">
-          <i data-lucide="search" size="18"></i>
-          <input type="text" id="campo-busca" placeholder="Pesquisar por motorista, placa ou tipo..." oninput="filtrarVeiculos()" />
+          <i data-lucide="search" size="17"></i>
+          <input type="text" id="campo-busca" placeholder="Pesquisar motorista, placa ou veículo..." oninput="filtrarVeiculos()" />
         </div>
 
         <div id="lista-veiculos" class="vehicle-list"></div>
       </section>
     </main>
 
-    <!-- ASSINATURA NO RODAPÉ -->
+    <!-- RODAPÉ -->
     <footer class="signature-footer">
       Desenvolvido por
       <a href="https://www.instagram.com/ocristianscherer/" target="_blank" rel="noopener noreferrer">
@@ -1344,7 +1268,6 @@
   </div>
 
   <script>
-    // URL DO GOOGLE APPS SCRIPT INTEGRADA
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzw6aE7o-MOAgD81TuChMoVvE2RlFMGl7-GkfK0fttwFjfOOceaayol2bSnL1_acDeYdg/exec";
 
     let unidadeAtual = "";
@@ -1354,7 +1277,6 @@
     let arquivoExportacaoPronto = null;
     let nomeArquivoGerado = "";
 
-    // Inicializa ícones, Drag & Drop e Splash Screen de 2 segundos
     window.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       configurarDragAndDrop();
@@ -1395,7 +1317,7 @@
       const toast = document.getElementById("toast");
       toast.textContent = msg;
       toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 3200);
+      setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
     function normalizarTexto(txt) {
@@ -1430,19 +1352,16 @@
       return String(cellValue).trim();
     }
 
-    // Valida se o código é realmente uma DT numérica (ex: 14329313), ignorando "R1", "AS1", "TOTAL ..." etc.
     function ehCodigoDTValido(valor) {
       const limpo = String(valor || "").trim();
       return /^\d{6,10}$/.test(limpo);
     }
 
-    // Identifica linhas de resumo da rota no formato R1, R2, AS1, AS2 etc.
     function ehResumoRota(valor) {
       const norm = normalizarTexto(valor);
       return /^(R|AS)\d+$/i.test(norm);
     }
 
-    // Identifica linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", "TOTAL GERAL") para ignorar
     function ehLinhaTotal(dtRaw, row) {
       const dtNorm = normalizarTexto(dtRaw);
       if (/^TOTAL(\b|\s|:|-|\d)/i.test(dtNorm)) return true;
@@ -1471,7 +1390,6 @@
       return Number.isFinite(num) ? num : 0;
     }
 
-    // LIMPAR ROTEIRIZAÇÃO PARA INICIAR NOVAMENTE
     function limparRoteirizacao(exibirAviso = true) {
       ultimoArquivoExcel = null;
       arquivoExportacaoPronto = null;
@@ -1482,7 +1400,7 @@
 
       const uploadTitle = document.getElementById("upload-title-text");
       if (uploadTitle) {
-        uploadTitle.textContent = "Toque ou arraste o arquivo Excel (.xlsx / .xls)";
+        uploadTitle.textContent = "Selecionar ou arrastar arquivo (.xlsx / .xls)";
       }
 
       const fileBadge = document.getElementById("loaded-file-badge");
@@ -1501,12 +1419,11 @@
         if (painel) {
           painel.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-        mostrarToast("Roteirização limpa! Pronto para iniciar novamente.");
+        mostrarToast("Pronto para nova roteirização.");
       }
       lucide.createIcons();
     }
 
-    // SELEÇÃO DE UNIDADE
     async function selecionarUnidade(unidade) {
       unidadeAtual = unidade;
       indisponiveisIds.clear();
@@ -1554,10 +1471,9 @@
       lucide.createIcons();
     }
 
-    // COMUNICAÇÃO COM GOOGLE DRIVE / SHEETS
     async function carregarFrotaDaUnidade() {
       try {
-        mostrarToast(`Carregando frota de ${unidadeAtual}...`);
+        mostrarToast(`Sincronizando ${unidadeAtual}...`);
         const resp = await fetch(`${SCRIPT_URL}?action=listar&unidade=${encodeURIComponent(unidadeAtual)}`);
         const json = await resp.json();
         if (json.status === "success") {
@@ -1567,7 +1483,7 @@
           localStorage.setItem(`rodalog_${unidadeAtual}`, JSON.stringify(frotaUnidade));
           renderizarListaVeiculos(frotaUnidade);
           renderizarSeletorIndisponibilidade();
-          mostrarToast(`Frota de ${unidadeAtual} sincronizada (${frotaUnidade.length} veículos).`);
+          mostrarToast(`${frotaUnidade.length} veículos carregados.`);
         } else {
           mostrarToast(json.message || "Erro ao carregar frota.");
         }
@@ -1576,11 +1492,10 @@
         frotaUnidade = local ? JSON.parse(local) : [];
         renderizarListaVeiculos(frotaUnidade);
         renderizarSeletorIndisponibilidade();
-        mostrarToast("Sem conexão com Drive; usando cache local.");
+        mostrarToast("Modo offline (cache local).");
       }
     }
 
-    // SELETOR DE INDISPONIBILIDADE DE MOTORISTAS
     function renderizarSeletorIndisponibilidade() {
       const container = document.getElementById("lista-indisponibilidade");
       const counter = document.getElementById("availability-counter");
@@ -1589,7 +1504,7 @@
 
       const totalIndisp = indisponiveisIds.size;
       const totalDisp = Math.max(0, frotaUnidade.length - totalIndisp);
-      counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disponível(is)`;
+      counter.textContent = `${totalDisp}/${frotaUnidade.length} ativos`;
 
       if (btnRestaurar) {
         if (totalIndisp > 0) {
@@ -1600,7 +1515,7 @@
       }
 
       if (!frotaUnidade || frotaUnidade.length === 0) {
-        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 6px;">Nenhum veículo cadastrado nesta unidade.</p>`;
+        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 4px;">Nenhum veículo cadastrado.</p>`;
         return;
       }
 
@@ -1613,7 +1528,7 @@
         : frotaUnidade;
 
       if (listaFiltrada.length === 0) {
-        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 6px;">Nenhum motorista encontrado para "${termoFiltro}".</p>`;
+        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 4px;">Nenhum resultado.</p>`;
         return;
       }
 
@@ -1624,9 +1539,9 @@
           <div class="driver-toggle ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
             <div class="driver-toggle-text">
               <b>${v.motorista}</b>
-              <span class="mono">${v.placa} • ${v.tipo} (${v.capacidade} cx)</span>
+              <span class="mono">${v.placa} • ${v.capacidade} cx</span>
             </div>
-            <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "INDISPONÍVEL" : "DISPONÍVEL"}</span>
+            <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "OFF" : "ON"}</span>
           </div>
         `;
       }).join("");
@@ -1635,7 +1550,7 @@
     function restaurarTodosMotoristas() {
       indisponiveisIds.clear();
       renderizarSeletorIndisponibilidade();
-      mostrarToast("Todos os motoristas marcados como disponíveis.");
+      mostrarToast("Frota restaurada.");
       if (ultimoArquivoExcel) {
         executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
       }
@@ -1654,7 +1569,6 @@
       }
     }
 
-    // CRUD DE VEÍCULOS
     function limparFormularioVeiculo() {
       document.getElementById("form-veiculo-titulo").textContent = "Cadastrar Veículo";
       document.getElementById("veiculo-id").value = "";
@@ -1697,7 +1611,7 @@
       const veiculoObj = { id, motorista, placa, tipo, capacidade };
 
       try {
-        mostrarToast("Salvando no Google Drive...");
+        mostrarToast("Salvando...");
         const resp = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({
@@ -1708,14 +1622,14 @@
         });
         const json = await resp.json();
         if (json.status === "success") {
-          mostrarToast("Veículo salvo com sucesso!");
+          mostrarToast("Veículo salvo!");
           limparFormularioVeiculo();
           await carregarFrotaDaUnidade();
         } else {
           mostrarToast(json.message || "Erro ao salvar.");
         }
       } catch (e) {
-        mostrarToast("Erro de rede ao salvar no Drive.");
+        mostrarToast("Erro de rede ao salvar.");
       }
     }
 
@@ -1727,10 +1641,10 @@
     }
 
     async function deletarVeiculoPorId(id) {
-      if (!confirm("Deseja realmente deletar este veículo?")) return;
+      if (!confirm("Deletar este veículo?")) return;
 
       try {
-        mostrarToast("Deletando veículo...");
+        mostrarToast("Deletando...");
         const resp = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({
@@ -1742,7 +1656,7 @@
         const json = await resp.json();
         if (json.status === "success") {
           indisponiveisIds.delete(String(id));
-          mostrarToast("Veículo deletado com sucesso!");
+          mostrarToast("Veículo deletado!");
           await carregarFrotaDaUnidade();
         } else {
           mostrarToast(json.message || "Erro ao deletar.");
@@ -1765,7 +1679,7 @@
     function renderizarListaVeiculos(lista) {
       const container = document.getElementById("lista-veiculos");
       if (!lista || lista.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color: var(--text-soft); padding: 18px;">Nenhum veículo encontrado nesta unidade.</p>`;
+        container.innerHTML = `<p style="text-align:center; color: var(--text-soft); padding: 16px;">Nenhum veículo encontrado.</p>`;
         return;
       }
 
@@ -1776,14 +1690,14 @@
               <span class="plate-badge mono">${v.placa}</span>
               <strong>${v.motorista}</strong>
             </div>
-            <span>${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b></span>
+            <span>${v.tipo} • <b class="mono">${v.capacidade} cx</b></span>
           </div>
           <div class="vehicle-item-btns">
             <button class="btn-mini btn-mini-edit" onclick="editarVeiculo('${v.id}')">
-              <i data-lucide="edit-3" size="14"></i> Editar
+              <i data-lucide="edit-3" size="13"></i> Editar
             </button>
             <button class="btn-mini btn-mini-del" onclick="deletarVeiculoPorId('${v.id}')">
-              <i data-lucide="trash-2" size="14"></i> Deletar
+              <i data-lucide="trash-2" size="13"></i> Deletar
             </button>
           </div>
         </div>
@@ -1791,9 +1705,6 @@
       lucide.createIcons();
     }
 
-    // =========================================================================
-    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL (PRESERVANDO LAYOUT ORIGINAL)
-    // =========================================================================
     function processarArquivoExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1803,17 +1714,17 @@
     function lerArquivoSelecionado(file) {
       const frotaAtiva = frotaUnidade.filter(v => !indisponiveisIds.has(String(v.id)));
       if (frotaAtiva.length === 0) {
-        mostrarToast("Atenção: não há motoristas disponíveis marcados hoje!");
+        mostrarToast("Nenhum motorista ativo!");
       }
 
       const uploadTitle = document.getElementById("upload-title-text");
       if (uploadTitle) {
-        uploadTitle.textContent = "Toque ou arraste para trocar o arquivo Excel";
+        uploadTitle.textContent = "Trocar arquivo (.xlsx / .xls)";
       }
 
       const fileBadge = document.getElementById("loaded-file-badge");
       if (fileBadge) {
-        fileBadge.textContent = `Planilha carregada: ${file.name}`;
+        fileBadge.textContent = file.name;
         fileBadge.classList.remove("hidden");
       }
 
@@ -1841,7 +1752,7 @@
         const rows = XLSX.utils.sheet_to_json(worksheetXlsx, { header: 1, defval: "" });
 
         if (rows.length < 2) {
-          mostrarToast("A planilha está vazia ou inválida.");
+          mostrarToast("Planilha vazia ou inválida.");
           return;
         }
 
@@ -1869,7 +1780,7 @@
         }
 
         if (colDT === -1 || colCX === -1) {
-          mostrarToast("Colunas 'DT' ou 'CX Convertida Parada' não encontradas no Excel!");
+          mostrarToast("Colunas 'DT' ou 'CX Convertida' não encontradas.");
           return;
         }
 
@@ -1880,7 +1791,6 @@
           colEntregador = Math.max(rows[headerRowIdx].length, colPlaca + 1);
         }
 
-        // Carrega com ExcelJS para ler cores e gravar mantendo o layout original
         const wbExcelJs = new ExcelJS.Workbook();
         await wbExcelJs.xlsx.load(buffer.slice().buffer);
         const wsExcelJs = wbExcelJs.worksheets[0];
@@ -1892,7 +1802,6 @@
           const row = rows[i];
           const dtRaw = String(row[colDT] || "").trim();
 
-          // Ignora completamente linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", etc.)
           if (ehLinhaTotal(dtRaw, row)) {
             continue;
           }
@@ -1901,7 +1810,6 @@
           const cellExcelJs = wsExcelJs ? wsExcelJs.getRow(i + 1).getCell(colCX + 1) : null;
           const linhaTemAmarelo = cellExcelJs ? corEhAmarela(cellExcelJs.fill) : false;
 
-          // Linha real de entrega: possui DT numérica (6 a 10 dígitos) e não é linha amarela de resumo
           if (ehCodigoDTValido(dtRaw) && !linhaTemAmarelo) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
@@ -1918,8 +1826,6 @@
             continue;
           }
 
-          // Linha de resumo da rota (R1, R2, AS1, AS2 ou linha amarela sem DT numérica):
-          // Define o total de caixas da rota acima e NUNCA recebe motorista/placa
           if (ultimaRotaAtiva && (ehResumoRota(dtRaw) || linhaTemAmarelo || (!dtRaw && cxVal > 0))) {
             if (cxVal > 0) {
               ultimaRotaAtiva.valorResumoRota = cxVal;
@@ -1975,7 +1881,6 @@
           }
         });
 
-        // Grava no ExcelJS preservando estilos e preenchendo SOMENTE linhas com DT numérica válida
         if (wsExcelJs) {
           const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
           const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
@@ -2021,7 +1926,7 @@
         }
       } catch (err) {
         console.error(err);
-        mostrarToast("Erro ao processar o arquivo Excel. Verifique o formato.");
+        mostrarToast("Erro ao processar Excel.");
       }
     }
 
@@ -2039,7 +1944,7 @@
 
       kpiGrid.innerHTML = `
         <div class="kpi-card">
-          <span class="kpi-label">Total de DTs</span>
+          <span class="kpi-label">DTs</span>
           <span class="kpi-value mono">${totalRotas}</span>
         </div>
         <div class="kpi-card">
@@ -2047,27 +1952,25 @@
           <span class="kpi-value mono" style="color: #A7F3D0;">${alocadas}</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-label">Sem Veículo</span>
+          <span class="kpi-label">Pendentes</span>
           <span class="kpi-value mono" style="color: ${naoAtendidas.length > 0 ? "#FCA5A5" : "#FFFFFF"};">${naoAtendidas.length}</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-label">Volume Total</span>
-          <span class="kpi-value mono">${totalCaixasGeral} cx</span>
+          <span class="kpi-label">Caixas</span>
+          <span class="kpi-value mono">${totalCaixasGeral}</span>
         </div>
       `;
 
       if (naoAtendidas.length > 0) {
-        const listaDTs = naoAtendidas.map(r => `DT ${r.dt} (${r.totalCaixas} cx)`).join(", ");
+        const listaDTs = naoAtendidas.map(r => `${r.dt} (${r.totalCaixas} cx)`).join(" • ");
         alertBox.className = "alert-box alert-warning";
         alertBox.innerHTML = `
-          ⚠️ <b>ATENÇÃO ANTES DE BAIXAR:</b> ${naoAtendidas.length} rota(s) ficaram com <b>PLACA e ENTREGADOR em branco</b> por falta de veículo disponível ou capacidade insuficiente na unidade <b>${unidadeAtual}</b>:<br/>
-          <span class="mono" style="font-size: 0.84rem; text-decoration: underline;">${listaDTs}</span>
+          ⚠️ <b>${naoAtendidas.length} DT(s) sem veículo compatível:</b><br/>
+          <span class="mono" style="font-size: 0.82rem;">${listaDTs}</span>
         `;
       } else {
         alertBox.className = "alert-box alert-success";
-        alertBox.innerHTML = `
-          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> foram alocadas (1 motorista por rota) no menor veículo compatível.
-        `;
+        alertBox.innerHTML = `✅ <b>${rotas.length} DT(s)</b> roteirizadas com sucesso.`;
       }
 
       tbody.innerHTML = rotas.map(r => {
@@ -2075,22 +1978,22 @@
           return `
             <tr>
               <td class="mono"><b>${r.dt}</b></td>
-              <td class="mono"><b>${r.totalCaixas} cx</b></td>
+              <td class="mono">${r.totalCaixas} cx</td>
               <td><span class="plate-badge mono">${normalizarPlaca(r.veiculoAlocado.placa)}</span></td>
               <td><b>${r.veiculoAlocado.motorista.toUpperCase()}</b></td>
-              <td class="mono">${r.veiculoAlocado.capacidade} cx (${r.veiculoAlocado.tipo})</td>
-              <td><span class="tag-ok">ROTEIRIZADO</span></td>
+              <td class="mono">${r.veiculoAlocado.capacidade} cx</td>
+              <td><span class="tag-ok">OK</span></td>
             </tr>
           `;
         } else {
           return `
             <tr>
               <td class="mono"><b>${r.dt}</b></td>
-              <td class="mono"><b>${r.totalCaixas} cx</b></td>
-              <td style="color: var(--text-soft);"><i>EM BRANCO</i></td>
-              <td style="color: var(--text-soft);"><i>EM BRANCO</i></td>
-              <td>-</td>
-              <td><span class="tag-pend">SEM VEÍCULO</span></td>
+              <td class="mono">${r.totalCaixas} cx</td>
+              <td style="color: var(--text-soft);">—</td>
+              <td style="color: var(--text-soft);">—</td>
+              <td>—</td>
+              <td><span class="tag-pend">PENDENTE</span></td>
             </tr>
           `;
         }
@@ -2110,7 +2013,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      mostrarToast("Download do Excel iniciado!");
+      mostrarToast("Download iniciado!");
     }
 
     function uint8ToBase64(u8Arr) {
@@ -2134,9 +2037,7 @@
             fileBase64: wbBase64
           })
         });
-      } catch (e) {
-        // Backup silencioso no Drive não interrompe o download do usuário
-      }
+      } catch (e) {}
     }
   </script>
 </body>
