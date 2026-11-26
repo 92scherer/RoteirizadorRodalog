@@ -830,7 +830,7 @@
           <i data-lucide="upload-cloud" size="40"></i>
           <strong style="font-size: 1.05rem;">2. Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
           <span style="font-size: 0.85rem; opacity: 0.9;">
-            Leitura automática das colunas <b>DT</b> e <b>CX Convertida Parada</b>
+            Leitura automática das colunas <b>DT</b> e <b>CX Convertida Parada</b> (linha total da rota)
           </span>
           <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
         </label>
@@ -844,7 +844,7 @@
               <thead>
                 <tr>
                   <th>DT (Rota)</th>
-                  <th>Total Caixas</th>
+                  <th>Total Carga (CX)</th>
                   <th>Placa</th>
                   <th>Entregador</th>
                   <th>Capacidade</th>
@@ -984,6 +984,24 @@
         .trim();
     }
 
+    function parseNumeroPlanilha(val) {
+      if (typeof val === "number") return Number.isFinite(val) ? val : 0;
+      let s = String(val || "").trim();
+      if (!s) return 0;
+      s = s.replace(/\s+/g, "");
+      if (s.includes(",") && s.includes(".")) {
+        if (s.lastIndexOf(",") > s.lastIndexOf(".")) {
+          s = s.replace(/\./g, "").replace(",", ".");
+        } else {
+          s = s.replace(/,/g, "");
+        }
+      } else if (s.includes(",")) {
+        s = s.replace(",", ".");
+      }
+      const num = parseFloat(s);
+      return Number.isFinite(num) ? num : 0;
+    }
+
     // SELEÇÃO DE UNIDADE
     async function selecionarUnidade(unidade) {
       unidadeAtual = unidade;
@@ -1098,7 +1116,6 @@
       }
       renderizarSeletorIndisponibilidade();
 
-      // Se já houver um arquivo carregado, recalcula o roteiro automaticamente com a nova disponibilidade
       if (ultimoArquivoExcel) {
         executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
       }
@@ -1263,7 +1280,7 @@
     function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
       try {
         const data = new Uint8Array(buffer);
-        const workbook = XLSX.read(data, { type: "array" });
+        const workbook = XLSX.read(data, { type: "array", cellStyles: true });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
 
@@ -1310,39 +1327,79 @@
           rows[headerRowIdx][colEntregador] = "ENTREGADOR";
         }
 
-        const mapaDT = new Map();
+        // Verifica se a célula na coluna CX tem preenchimento amarelo no Excel
+        function isCelulaAmarela(rowIdx, colIdx) {
+          const addr = XLSX.utils.encode_cell({ r: rowIdx, c: colIdx });
+          const cell = worksheet[addr];
+          const rgb = cell && cell.s && cell.s.fgColor && cell.s.fgColor.rgb
+            ? String(cell.s.fgColor.rgb).toUpperCase()
+            : "";
+          return rgb.includes("FFFF") || rgb.includes("FFF2") || rgb.includes("FFE6") || rgb.includes("FFEB");
+        }
+
+        const rotasMap = new Map();
+        let ultimaRotaAtiva = null;
 
         for (let i = headerRowIdx + 1; i < rows.length; i++) {
           const row = rows[i];
           const dtRaw = String(row[colDT] || "").trim();
           const dtNorm = normalizarTexto(dtRaw);
+          const cxVal = parseNumeroPlanilha(row[colCX]);
+          const linhaTemAmarelo = isCelulaAmarela(i, colCX);
 
-          // Ignora linhas vazias ou linhas de totalizador/resumo
-          if (!dtNorm || dtNorm.includes("TOTAL") || dtNorm.includes("RESUMO") || dtNorm.includes("GERAL")) {
+          // Linha com DT preenchida (linha de cliente/parada da rota)
+          if (dtRaw && !dtNorm.startsWith("TOTAL") && !dtNorm.startsWith("RESUMO") && !dtNorm.startsWith("SUBTOTAL")) {
+            if (!rotasMap.has(dtRaw)) {
+              rotasMap.set(dtRaw, {
+                dt: dtRaw,
+                valoresParada: [],
+                valorLinhaAmarela: null,
+                linhasIndices: []
+              });
+            }
+            const grupo = rotasMap.get(dtRaw);
+            grupo.linhasIndices.push(i);
+            if (linhaTemAmarelo && cxVal > 0) {
+              grupo.valorLinhaAmarela = cxVal;
+            } else {
+              grupo.valoresParada.push(cxVal);
+            }
+            ultimaRotaAtiva = grupo;
             continue;
           }
 
-          const cxVal = parseFloat(String(row[colCX] || "0").replace(",", ".")) || 0;
-
-          if (!mapaDT.has(dtRaw)) {
-            mapaDT.set(dtRaw, {
-              dt: dtRaw,
-              valoresCx: [],
-              linhasIndices: []
-            });
+          // Linha sem DT (ou linha de subtotal): pode ser a linha amarela de total da última rota
+          if (ultimaRotaAtiva && cxVal > 0 && !dtNorm.includes("GERAL")) {
+            const somaParadas = ultimaRotaAtiva.valoresParada.reduce((acc, v) => acc + v, 0);
+            // Se a célula for amarela ou o valor bater com o total da rota (maior ou igual às paradas), usa como total da rota
+            if (linhaTemAmarelo || cxVal >= somaParadas || ultimaRotaAtiva.valoresParada.length > 0) {
+              ultimaRotaAtiva.valorLinhaAmarela = cxVal;
+              ultimaRotaAtiva.linhasIndices.push(i);
+              ultimaRotaAtiva = null;
+            }
           }
-
-          const grupo = mapaDT.get(dtRaw);
-          grupo.valoresCx.push(cxVal);
-          grupo.linhasIndices.push(i);
         }
 
         const rotasConsolidadas = [];
-        mapaDT.forEach(grupo => {
-          const soma = grupo.valoresCx.reduce((acc, v) => acc + v, 0);
+        rotasMap.forEach(grupo => {
+          let totalCarga = 0;
+
+          if (grupo.valorLinhaAmarela !== null && grupo.valorLinhaAmarela > 0) {
+            totalCarga = grupo.valorLinhaAmarela;
+          } else {
+            const naoVazios = grupo.valoresParada.filter(v => v > 0);
+            const todosIguais =
+              naoVazios.length > 1 &&
+              naoVazios.every(v => Math.abs(v - naoVazios[0]) < 0.0001);
+
+            totalCarga = todosIguais
+              ? naoVazios[0]
+              : grupo.valoresParada.reduce((acc, v) => acc + v, 0);
+          }
+
           rotasConsolidadas.push({
             dt: grupo.dt,
-            totalCaixas: Math.round(soma * 100) / 100,
+            totalCaixas: Math.round(totalCarga * 100) / 100,
             linhasIndices: grupo.linhasIndices,
             veiculoAlocado: null
           });
@@ -1351,7 +1408,7 @@
         // Ordena rotas da maior carga para a menor carga
         rotasConsolidadas.sort((a, b) => b.totalCaixas - a.totalCaixas);
 
-        // Exclui motoristas/veículos marcados como indisponíveis e ordena da menor para a maior capacidade
+        // 1 motorista por rota: exclui indisponíveis e escolhe o menor veículo disponível que comporte a carga
         const veiculosDisponiveis = frotaUnidade
           .filter(v => !indisponiveisIds.has(String(v.id)))
           .map(v => ({ ...v, usado: false }))
@@ -1415,7 +1472,7 @@
       } else {
         alertBox.className = "alert-box alert-success";
         alertBox.innerHTML = `
-          ✅ <b>ROTEIRIZAÇÃO 100% CONCLUÍDA!</b> Todas as ${rotas.length} rotas (DTs) da unidade <b>${unidadeAtual}</b> foram alocadas no menor veículo compatível.
+          ✅ <b>ROTEIRIZAÇÃO 100% CONCLUÍDA!</b> Todas as ${rotas.length} rotas (DTs) da unidade <b>${unidadeAtual}</b> foram alocadas (1 motorista por rota) no menor veículo compatível.
         `;
       }
 
@@ -1424,7 +1481,7 @@
           return `
             <tr>
               <td><b>${r.dt}</b></td>
-              <td>${r.totalCaixas} cx</td>
+              <td><b>${r.totalCaixas} cx</b></td>
               <td><b>${normalizarPlaca(r.veiculoAlocado.placa)}</b></td>
               <td>${r.veiculoAlocado.motorista.toUpperCase()}</td>
               <td>${r.veiculoAlocado.capacidade} cx (${r.veiculoAlocado.tipo})</td>
@@ -1435,7 +1492,7 @@
           return `
             <tr>
               <td><b>${r.dt}</b></td>
-              <td>${r.totalCaixas} cx</td>
+              <td><b>${r.totalCaixas} cx</b></td>
               <td><i>EM BRANCO</i></td>
               <td><i>EM BRANCO</i></td>
               <td>-</td>
