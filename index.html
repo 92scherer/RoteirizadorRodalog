@@ -832,7 +832,7 @@
           <i data-lucide="upload-cloud" size="40"></i>
           <strong style="font-size: 1.05rem;">2. Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
           <span style="font-size: 0.85rem; opacity: 0.9;">
-            Preserva layout, cores e linhas • Lê <b>DT</b> e <b>CX Convertida Parada</b>
+            Preserva layout, cores e linhas • Lê <b>DT</b> numérica e total na linha amarela
           </span>
           <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
         </label>
@@ -1001,6 +1001,12 @@
         return "";
       }
       return String(cellValue).trim();
+    }
+
+    // Valida se o código é realmente uma DT numérica (ex: 14329313 - 8 dígitos), ignorando códigos como "AS1"
+    function ehCodigoDTValido(valor) {
+      const limpo = String(valor || "").trim();
+      return /^\d{6,10}$/.test(limpo);
     }
 
     function parseNumeroPlanilha(val) {
@@ -1306,18 +1312,6 @@
       return argb.endsWith("FFFF00") || argb.endsWith("FFF2CC") || argb.endsWith("FFE699") || argb.endsWith("FFEB9C");
     }
 
-    function linhaTemDTValida(ws, rowIdx0, colDT0) {
-      if (!ws) return false;
-      const cell = ws.getRow(rowIdx0 + 1).getCell(colDT0 + 1);
-      const val = extrairValorCelulaExcelJs(cell.value);
-      const norm = normalizarTexto(val);
-      if (!val) return false;
-      if (norm.startsWith("TOTAL") || norm.startsWith("RESUMO") || norm.startsWith("SUBTOTAL")) {
-        return false;
-      }
-      return true;
-    }
-
     async function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
       try {
         const workbookXlsx = XLSX.read(buffer, { type: "array" });
@@ -1382,7 +1376,8 @@
           const cellExcelJs = wsExcelJs ? wsExcelJs.getRow(i + 1).getCell(colCX + 1) : null;
           const linhaTemAmarelo = cellExcelJs ? corEhAmarela(cellExcelJs.fill) : false;
 
-          if (dtRaw && !dtNorm.startsWith("TOTAL") && !dtNorm.startsWith("RESUMO") && !dtNorm.startsWith("SUBTOTAL")) {
+          // Só considera rota se a coluna DT tiver os dígitos numéricos da DT (ex: 14329313)
+          if (ehCodigoDTValido(dtRaw) && !linhaTemAmarelo) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
                 dt: dtRaw,
@@ -1393,16 +1388,13 @@
             }
             const grupo = rotasMap.get(dtRaw);
             grupo.linhasDT.push(i);
-            if (linhaTemAmarelo && cxVal > 0) {
-              grupo.valorLinhaAmarela = cxVal;
-            } else {
-              grupo.valoresParada.push(cxVal);
-            }
+            grupo.valoresParada.push(cxVal);
             ultimaRotaAtiva = grupo;
             continue;
           }
 
-          // Linha sem DT (linha amarela de subtotal/total da rota): usa apenas para o total da rota
+          // Linha amarela de total da rota (ex: primeira coluna com "AS1" ou vazia, sem DT numérica):
+          // Captura o total de caixas para a rota acima e NÃO adiciona essa linha em linhasDT
           if (ultimaRotaAtiva && cxVal > 0 && !dtNorm.includes("GERAL")) {
             const somaParadas = ultimaRotaAtiva.valoresParada.reduce((acc, v) => acc + v, 0);
             if (linhaTemAmarelo || cxVal >= somaParadas || ultimaRotaAtiva.valoresParada.length > 0) {
@@ -1459,7 +1451,7 @@
           }
         });
 
-        // Grava no ExcelJS preservando estilos e garantindo que linhas sem DT fiquem em branco
+        // Grava no ExcelJS preservando estilos e preenchendo SOMENTE linhas com DT numérica
         if (wsExcelJs) {
           const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
           const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
@@ -1480,8 +1472,9 @@
               const motoristaFmt = rota.veiculoAlocado.motorista.toUpperCase().trim();
 
               rota.linhasDT.forEach(rowIdx => {
-                if (linhaTemDTValida(wsExcelJs, rowIdx, colDT)) {
-                  const rObj = wsExcelJs.getRow(rowIdx + 1);
+                const rObj = wsExcelJs.getRow(rowIdx + 1);
+                const dtNaCelula = extrairValorCelulaExcelJs(rObj.getCell(colDT + 1).value);
+                if (ehCodigoDTValido(dtNaCelula)) {
                   rObj.getCell(colPlaca + 1).value = placaFmt;
                   rObj.getCell(colEntregador + 1).value = motoristaFmt;
                 }
