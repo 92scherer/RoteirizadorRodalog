@@ -449,6 +449,13 @@
       flex-shrink: 0;
     }
 
+    .step-badges-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .availability-summary {
       font-size: 0.78rem;
       font-weight: 700;
@@ -457,6 +464,26 @@
       color: #FFFFFF;
       padding: 5px 12px;
       border-radius: 999px;
+    }
+
+    .btn-reset-drivers {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--border-strong);
+      color: #FFFFFF;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-reset-drivers:hover {
+      background: rgba(255, 255, 255, 0.28);
     }
 
     .mini-filter-wrap {
@@ -616,6 +643,19 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 8px 20px rgba(85, 20, 0, 0.24);
+    }
+
+    .loaded-file-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.24);
+      border: 1px solid rgba(52, 211, 153, 0.6);
+      color: #ECFDF5;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
     .upload-zone input[type="file"] {
@@ -813,7 +853,7 @@
 
     .btn-action {
       flex: 1;
-      min-width: 150px;
+      min-width: 170px;
       padding: 14px 18px;
       border-radius: var(--radius-md);
       border: 1px solid transparent;
@@ -826,7 +866,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
     .btn-action:active {
@@ -851,9 +891,14 @@
     }
 
     .btn-cancel {
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.16);
       color: #FFFFFF;
-      border-color: var(--border-subtle);
+      border-color: var(--border-strong);
+    }
+
+    .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.26);
+      transform: translateY(-1px);
     }
 
     /* LISTA / BUSCA DE VEÍCULOS */
@@ -1139,7 +1184,12 @@
               <span class="step-number">1</span>
               <span>Disponibilidade da Frota Hoje</span>
             </div>
-            <span id="availability-counter" class="availability-summary">0 indisponíveis</span>
+            <div class="step-badges-right">
+              <span id="availability-counter" class="availability-summary">0 indisponíveis</span>
+              <button id="btn-restaurar-motoristas" class="btn-reset-drivers hidden" onclick="restaurarTodosMotoristas()">
+                <i data-lucide="rotate-ccw" size="12"></i> Restaurar todos
+              </button>
+            </div>
           </div>
 
           <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px;">
@@ -1167,7 +1217,8 @@
             <div class="upload-icon-circle">
               <i data-lucide="upload-cloud" size="28"></i>
             </div>
-            <strong style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
+            <strong id="upload-title-text" style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
+            <span id="loaded-file-badge" class="loaded-file-pill hidden"></span>
             <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 540px;">
               Mantém cores, bordas e layout originais • Lê <b>DT numérica</b> e total da rota (<b>R / AS</b>), ignorando linhas <b>TOTAL</b>
             </span>
@@ -1200,6 +1251,10 @@
             <button class="btn-action btn-save" onclick="baixarExcelAtualizado()">
               <i data-lucide="download" size="19"></i>
               <span>Baixar Excel Roteirizado</span>
+            </button>
+            <button class="btn-action btn-cancel" onclick="limparRoteirizacao()">
+              <i data-lucide="rotate-ccw" size="19"></i>
+              <span>Limpar / Nova Roteirização</span>
             </button>
           </div>
         </div>
@@ -1416,19 +1471,51 @@
       return Number.isFinite(num) ? num : 0;
     }
 
+    // LIMPAR ROTEIRIZAÇÃO PARA INICIAR NOVAMENTE
+    function limparRoteirizacao(exibirAviso = true) {
+      ultimoArquivoExcel = null;
+      arquivoExportacaoPronto = null;
+      nomeArquivoGerado = "";
+
+      const inputExcel = document.getElementById("excel-input");
+      if (inputExcel) inputExcel.value = "";
+
+      const uploadTitle = document.getElementById("upload-title-text");
+      if (uploadTitle) {
+        uploadTitle.textContent = "Toque ou arraste o arquivo Excel (.xlsx / .xls)";
+      }
+
+      const fileBadge = document.getElementById("loaded-file-badge");
+      if (fileBadge) {
+        fileBadge.textContent = "";
+        fileBadge.classList.add("hidden");
+      }
+
+      document.getElementById("routing-result-area").classList.add("hidden");
+      document.getElementById("routing-kpis").innerHTML = "";
+      document.getElementById("routing-alert").innerHTML = "";
+      document.getElementById("routing-preview-body").innerHTML = "";
+
+      if (exibirAviso) {
+        const painel = document.getElementById("tab-roteirizar");
+        if (painel) {
+          painel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        mostrarToast("Roteirização limpa! Pronto para iniciar novamente.");
+      }
+      lucide.createIcons();
+    }
+
     // SELEÇÃO DE UNIDADE
     async function selecionarUnidade(unidade) {
       unidadeAtual = unidade;
       indisponiveisIds.clear();
-      ultimoArquivoExcel = null;
-      arquivoExportacaoPronto = null;
+      limparRoteirizacao(false);
 
       document.getElementById("current-unit-label").textContent = unidade;
       document.getElementById("active-unit-bar").classList.remove("hidden");
       document.getElementById("view-unidades").classList.add("hidden");
       document.getElementById("view-sistema").classList.remove("hidden");
-      document.getElementById("routing-result-area").classList.add("hidden");
-      document.getElementById("excel-input").value = "";
       document.getElementById("filtro-indisponibilidade").value = "";
 
       abrirAba("roteirizar");
@@ -1439,8 +1526,7 @@
       unidadeAtual = "";
       frotaUnidade = [];
       indisponiveisIds.clear();
-      ultimoArquivoExcel = null;
-      arquivoExportacaoPronto = null;
+      limparRoteirizacao(false);
       document.getElementById("active-unit-bar").classList.add("hidden");
       document.getElementById("view-sistema").classList.add("hidden");
       document.getElementById("view-unidades").classList.remove("hidden");
@@ -1498,11 +1584,20 @@
     function renderizarSeletorIndisponibilidade() {
       const container = document.getElementById("lista-indisponibilidade");
       const counter = document.getElementById("availability-counter");
+      const btnRestaurar = document.getElementById("btn-restaurar-motoristas");
       const termoFiltro = normalizarTexto(document.getElementById("filtro-indisponibilidade")?.value || "");
 
       const totalIndisp = indisponiveisIds.size;
       const totalDisp = Math.max(0, frotaUnidade.length - totalIndisp);
       counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disponível(is)`;
+
+      if (btnRestaurar) {
+        if (totalIndisp > 0) {
+          btnRestaurar.classList.remove("hidden");
+        } else {
+          btnRestaurar.classList.add("hidden");
+        }
+      }
 
       if (!frotaUnidade || frotaUnidade.length === 0) {
         container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 6px;">Nenhum veículo cadastrado nesta unidade.</p>`;
@@ -1535,6 +1630,15 @@
           </div>
         `;
       }).join("");
+    }
+
+    function restaurarTodosMotoristas() {
+      indisponiveisIds.clear();
+      renderizarSeletorIndisponibilidade();
+      mostrarToast("Todos os motoristas marcados como disponíveis.");
+      if (ultimoArquivoExcel) {
+        executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
+      }
     }
 
     function alternarIndisponibilidade(idStr) {
@@ -1700,6 +1804,17 @@
       const frotaAtiva = frotaUnidade.filter(v => !indisponiveisIds.has(String(v.id)));
       if (frotaAtiva.length === 0) {
         mostrarToast("Atenção: não há motoristas disponíveis marcados hoje!");
+      }
+
+      const uploadTitle = document.getElementById("upload-title-text");
+      if (uploadTitle) {
+        uploadTitle.textContent = "Toque ou arraste para trocar o arquivo Excel";
+      }
+
+      const fileBadge = document.getElementById("loaded-file-badge");
+      if (fileBadge) {
+        fileBadge.textContent = `Planilha carregada: ${file.name}`;
+        fileBadge.classList.remove("hidden");
       }
 
       const reader = new FileReader();
@@ -1899,6 +2014,8 @@
         nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
 
         renderizarResultadoRoteirizacao(rotasConsolidadas, rotasNaoAtendidas);
+        lucide.createIcons();
+
         if (salvarBackup) {
           enviarBackupDrive(arquivoExportacaoPronto, nomeArquivoGerado);
         }
