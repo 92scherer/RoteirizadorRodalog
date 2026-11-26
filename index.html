@@ -125,10 +125,10 @@
       100% { transform: translateX(240%); }
     }
 
-    /* CONTAINER PRINCIPAL (MAIS PRÓXIMO DO TOPO E DO SISTEMA) */
+    /* CONTAINER PRINCIPAL */
     .app-wrapper {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1060px;
       padding: 4px 16px 36px;
       display: flex;
       flex-direction: column;
@@ -137,7 +137,7 @@
       flex: 1;
     }
 
-    /* HEADER MODERNO (LOGO BEM MAIOR E COLADO AO SISTEMA) */
+    /* HEADER MODERNO */
     header {
       width: 100%;
       display: flex;
@@ -270,6 +270,20 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+    }
+
+    .tolerance-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid var(--border-strong);
+      color: #FFFFFF;
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
     }
 
     /* GRADE DE UNIDADES */
@@ -730,10 +744,22 @@
       color: #FEF2F2;
     }
 
+    .manual-edit-hint {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
     .table-responsive {
       width: 100%;
       overflow-x: auto;
-      margin-top: 16px;
+      margin-top: 10px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-elevated);
@@ -747,7 +773,7 @@
     }
 
     th, td {
-      padding: 12px 14px;
+      padding: 11px 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       white-space: nowrap;
     }
@@ -765,6 +791,39 @@
       background: rgba(255, 255, 255, 0.06);
     }
 
+    /* SELETOR DE AJUSTE MANUAL NA PRÉVIA */
+    .manual-driver-select {
+      min-width: 245px;
+      max-width: 310px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: rgba(14, 5, 1, 0.65);
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .manual-driver-select:focus,
+    .manual-driver-select:hover {
+      border-color: #FFFFFF;
+      background: rgba(14, 5, 1, 0.85);
+    }
+
+    .manual-driver-select.unassigned {
+      border-color: #FCA5A5;
+      background: rgba(153, 27, 27, 0.55);
+    }
+
+    .manual-driver-select option {
+      background: #7A1D00;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
     .tag-ok {
       display: inline-flex;
       align-items: center;
@@ -772,6 +831,19 @@
       background: rgba(16, 185, 129, 0.26);
       color: #A7F3D0;
       border: 1px solid rgba(52, 211, 153, 0.55);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.72rem;
+    }
+
+    .tag-tol {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(245, 158, 11, 0.30);
+      color: #FDE68A;
+      border: 1px solid rgba(251, 191, 36, 0.65);
       padding: 4px 10px;
       border-radius: 999px;
       font-weight: 800;
@@ -1182,6 +1254,10 @@
             <span class="panel-title-icon"><i data-lucide="file-spreadsheet" size="18"></i></span>
             <span>Roteirização Automática por DT</span>
           </div>
+          <span class="tolerance-pill">
+            <i data-lucide="shield-check" size="15"></i>
+            <span>Tolerância +5% ativa</span>
+          </span>
         </div>
 
         <!-- PASSO 1: INDISPONIBILIDADE DE MOTORISTAS -->
@@ -1226,8 +1302,8 @@
             </div>
             <strong id="upload-title-text" style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
             <span id="loaded-file-badge" class="loaded-file-pill hidden"></span>
-            <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 540px;">
-              Mantém cores, bordas e layout originais • Lê <b>DT numérica</b> e total da rota (<b>R / AS</b>), ignorando linhas <b>TOTAL</b>
+            <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 580px;">
+              Prioriza capacidade exata e aceita até <b>+5% de tolerância</b> • Permite <b>ajuste manual</b> na prévia antes de baixar
             </span>
             <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
           </label>
@@ -1238,6 +1314,13 @@
           <div id="routing-kpis" class="kpi-grid"></div>
           <div id="routing-alert" class="alert-box"></div>
 
+          <div class="manual-edit-hint">
+            <span><i data-lucide="sliders-horizontal" size="15" style="vertical-align: -2px; margin-right: 5px;"></i>Ajuste manual liberado: altere o motorista em qualquer DT antes de baixar o Excel.</span>
+            <button id="btn-recalcular-auto" class="btn-reset-drivers hidden" onclick="recalcularAutomatico()">
+              <i data-lucide="sparkles" size="12"></i> Restaurar alocação automática
+            </button>
+          </div>
+
           <div class="table-responsive">
             <table>
               <thead>
@@ -1245,8 +1328,8 @@
                   <th>DT (Rota)</th>
                   <th>Total Carga (CX)</th>
                   <th>Placa</th>
-                  <th>Entregador</th>
-                  <th>Capacidade</th>
+                  <th>Entregador (Ajustável)</th>
+                  <th>Capacidade (+5% máx)</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -1354,12 +1437,19 @@
     // URL DO GOOGLE APPS SCRIPT INTEGRADA
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzw6aE7o-MOAgD81TuChMoVvE2RlFMGl7-GkfK0fttwFjfOOceaayol2bSnL1_acDeYdg/exec";
 
+    // TOLERÂNCIA DE CAPACIDADE (+5%)
+    const TOLERANCIA_CAPACIDADE = 1.05;
+
     let unidadeAtual = "";
     let frotaUnidade = [];
     let indisponiveisIds = new Set();
     let ultimoArquivoExcel = null;
     let arquivoExportacaoPronto = null;
     let nomeArquivoGerado = "";
+
+    // Estado ativo da roteirização atual para permitir ajuste manual antes do download
+    let estadoRoteirizacaoAtual = null;
+    let houveAjusteManual = false;
 
     // Inicializa ícones, Drag & Drop e Splash Screen de 2 segundos
     window.addEventListener("DOMContentLoaded", () => {
@@ -1418,6 +1508,10 @@
         .toUpperCase()
         .replace(/[^A-Z0-9]/g, "")
         .trim();
+    }
+
+    function capacidadeComTolerancia(capacidadeBase) {
+      return Math.round(Number(capacidadeBase || 0) * TOLERANCIA_CAPACIDADE * 100) / 100;
     }
 
     function extrairValorCelulaExcelJs(cellValue) {
@@ -1483,6 +1577,11 @@
       ultimoArquivoExcel = null;
       arquivoExportacaoPronto = null;
       nomeArquivoGerado = "";
+      estadoRoteirizacaoAtual = null;
+      houveAjusteManual = false;
+
+      const btnRecalc = document.getElementById("btn-recalcular-auto");
+      if (btnRecalc) btnRecalc.classList.add("hidden");
 
       const inputExcel = document.getElementById("excel-input");
       if (inputExcel) inputExcel.value = "";
@@ -1627,11 +1726,12 @@
       container.innerHTML = listaFiltrada.map(v => {
         const idStr = String(v.id);
         const isOff = indisponiveisIds.has(idStr);
+        const capMax = capacidadeComTolerancia(v.capacidade);
         return `
           <div class="driver-toggle ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
             <div class="driver-toggle-text">
               <b>${v.motorista}</b>
-              <span class="mono">${v.placa} • ${v.tipo} (${v.capacidade} cx)</span>
+              <span class="mono">${v.placa} • ${v.tipo} (${v.capacidade} cx | máx ${capMax})</span>
             </div>
             <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "INDISPONÍVEL" : "DISPONÍVEL"}</span>
           </div>
@@ -1783,7 +1883,7 @@
               <span class="plate-badge mono">${v.placa}</span>
               <strong>${v.motorista}</strong>
             </div>
-            <span>${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b></span>
+            <span>${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b> (até <b class="mono">${capacidadeComTolerancia(v.capacidade)} cx</b> com +5%)</span>
           </div>
           <div class="vehicle-item-btns">
             <button class="btn-mini btn-mini-edit" onclick="editarVeiculo('${v.id}')">
@@ -1799,7 +1899,7 @@
     }
 
     // =========================================================================
-    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL (PRESERVANDO LAYOUT ORIGINAL)
+    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL + TOLERÂNCIA +5% + AJUSTE MANUAL
     // =========================================================================
     function processarArquivoExcel(event) {
       const file = event.target.files[0];
@@ -1925,8 +2025,7 @@
             continue;
           }
 
-          // Linha de resumo da rota (R1, R2, AS1, AS2 ou linha amarela sem DT numérica):
-          // Define o total de caixas da rota acima e NUNCA recebe motorista/placa
+          // Linha de resumo da rota (R1, R2, AS1, AS2 ou linha amarela sem DT numérica)
           if (ultimaRotaAtiva && (ehResumoRota(dtRaw) || linhaTemAmarelo || (!dtRaw && cxVal > 0))) {
             if (cxVal > 0) {
               ultimaRotaAtiva.valorResumoRota = cxVal;
@@ -1967,68 +2066,149 @@
           .map(v => ({ ...v, usado: false }))
           .sort((a, b) => a.capacidade - b.capacidade);
 
-        const rotasNaoAtendidas = [];
-
+        // 1º: Tenta alocar dentro da capacidade nominal exata; se não couber, usa tolerância de até +5%
         rotasConsolidadas.forEach(rota => {
-          const veiculoIdeal = veiculosDisponiveis.find(
-            v => !v.usado && v.capacidade >= rota.totalCaixas
+          let veiculoIdeal = veiculosDisponiveis.find(
+            v => !v.usado && Number(v.capacidade) >= rota.totalCaixas
           );
+
+          if (!veiculoIdeal) {
+            veiculoIdeal = veiculosDisponiveis.find(
+              v => !v.usado && capacidadeComTolerancia(v.capacidade) >= rota.totalCaixas
+            );
+          }
 
           if (veiculoIdeal) {
             veiculoIdeal.usado = true;
             rota.veiculoAlocado = veiculoIdeal;
-          } else {
-            rotasNaoAtendidas.push(rota);
           }
         });
-
-        // Grava no ExcelJS preservando estilos e preenchendo SOMENTE linhas com DT numérica válida
-        if (wsExcelJs) {
-          const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
-          const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
-          const cellHdrEntr = headerRow.getCell(colEntregador + 1);
-          if (!String(cellHdrPlaca.value || "").trim()) cellHdrPlaca.value = "PLACA";
-          if (!String(cellHdrEntr.value || "").trim()) cellHdrEntr.value = "ENTREGADOR";
-
-          const totalLinhasExcel = Math.max(rows.length, wsExcelJs.rowCount);
-          for (let i = headerRowIdx + 1; i < totalLinhasExcel; i++) {
-            const rObj = wsExcelJs.getRow(i + 1);
-            rObj.getCell(colPlaca + 1).value = null;
-            rObj.getCell(colEntregador + 1).value = null;
-          }
-
-          rotasConsolidadas.forEach(rota => {
-            if (rota.veiculoAlocado) {
-              const placaFmt = normalizarPlaca(rota.veiculoAlocado.placa);
-              const motoristaFmt = rota.veiculoAlocado.motorista.toUpperCase().trim();
-
-              rota.linhasDT.forEach(rowIdx => {
-                const rObj = wsExcelJs.getRow(rowIdx + 1);
-                const dtNaCelula = extrairValorCelulaExcelJs(rObj.getCell(colDT + 1).value);
-                if (ehCodigoDTValido(dtNaCelula)) {
-                  rObj.getCell(colPlaca + 1).value = placaFmt;
-                  rObj.getCell(colEntregador + 1).value = motoristaFmt;
-                }
-              });
-            }
-          });
-        }
-
-        const outBuffer = await wbExcelJs.xlsx.writeBuffer();
-        arquivoExportacaoPronto = new Uint8Array(outBuffer);
 
         const baseName = originalFileName.replace(/\.[^/.]+$/, "");
         nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
 
-        renderizarResultadoRoteirizacao(rotasConsolidadas, rotasNaoAtendidas);
-        lucide.createIcons();
+        estadoRoteirizacaoAtual = {
+          buffer,
+          originalFileName,
+          rowsCount: rows.length,
+          headerRowIdx,
+          colDT,
+          colPlaca,
+          colEntregador,
+          rotas: rotasConsolidadas
+        };
 
-        if (salvarBackup) {
-          enviarBackupDrive(arquivoExportacaoPronto, nomeArquivoGerado);
-        }
+        houveAjusteManual = false;
+        const btnRecalc = document.getElementById("btn-recalcular-auto");
+        if (btnRecalc) btnRecalc.classList.add("hidden");
+
+        await reconstruirBufferExcelEGerarPrevia(salvarBackup);
       } catch (err) {
         console.error(err);
         mostrarToast("Erro ao processar o arquivo Excel. Verifique o formato.");
+      }
+    }
+
+    function recalcularAutomatico() {
+      if (!ultimoArquivoExcel) return;
+      executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
+      mostrarToast("Alocação automática restaurada.");
+    }
+
+    async function alterarMotoristaManual(dtAlvo, novoVeiculoId) {
+      if (!estadoRoteirizacaoAtual) return;
+
+      const rotaAlvo = estadoRoteirizacaoAtual.rotas.find(r => r.dt === dtAlvo);
+      if (!rotaAlvo) return;
+
+      if (!novoVeiculoId) {
+        rotaAlvo.veiculoAlocado = null;
+      } else {
+        const veiculoEscolhido = frotaUnidade.find(v => String(v.id) === String(novoVeiculoId));
+        if (!veiculoEscolhido) return;
+
+        // Evita duplicar o mesmo motorista em duas DTs simultaneamente
+        let rotaAnteriorDesalocada = null;
+        estadoRoteirizacaoAtual.rotas.forEach(r => {
+          if (r.dt !== dtAlvo && r.veiculoAlocado && String(r.veiculoAlocado.id) === String(novoVeiculoId)) {
+            r.veiculoAlocado = null;
+            rotaAnteriorDesalocada = r.dt;
+          }
+        });
+
+        rotaAlvo.veiculoAlocado = veiculoEscolhido;
+
+        if (rotaAnteriorDesalocada) {
+          mostrarToast(`${veiculoEscolhido.motorista} movido da DT ${rotaAnteriorDesalocada} para a DT ${dtAlvo}.`);
+        } else {
+          mostrarToast(`DT ${dtAlvo} atribuída para ${veiculoEscolhido.motorista}.`);
+        }
+      }
+
+      houveAjusteManual = true;
+      const btnRecalc = document.getElementById("btn-recalcular-auto");
+      if (btnRecalc) btnRecalc.classList.remove("hidden");
+
+      await reconstruirBufferExcelEGerarPrevia(false);
+    }
+
+    async function reconstruirBufferExcelEGerarPrevia(salvarBackup) {
+      if (!estadoRoteirizacaoAtual) return;
+
+      const {
+        buffer,
+        rowsCount,
+        headerRowIdx,
+        colDT,
+        colPlaca,
+        colEntregador,
+        rotas
+      } = estadoRoteirizacaoAtual;
+
+      const wbExcelJs = new ExcelJS.Workbook();
+      await wbExcelJs.xlsx.load(buffer.slice().buffer);
+      const wsExcelJs = wbExcelJs.worksheets[0];
+
+      if (wsExcelJs) {
+        const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
+        const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
+        const cellHdrEntr = headerRow.getCell(colEntregador + 1);
+        if (!String(cellHdrPlaca.value || "").trim()) cellHdrPlaca.value = "PLACA";
+        if (!String(cellHdrEntr.value || "").trim()) cellHdrEntr.value = "ENTREGADOR";
+
+        const totalLinhasExcel = Math.max(rowsCount, wsExcelJs.rowCount);
+        for (let i = headerRowIdx + 1; i < totalLinhasExcel; i++) {
+          const rObj = wsExcelJs.getRow(i + 1);
+          rObj.getCell(colPlaca + 1).value = null;
+          rObj.getCell(colEntregador + 1).value = null;
+        }
+
+        rotas.forEach(rota => {
+          if (rota.veiculoAlocado) {
+            const placaFmt = normalizarPlaca(rota.veiculoAlocado.placa);
+            const motoristaFmt = rota.veiculoAlocado.motorista.toUpperCase().trim();
+
+            rota.linhasDT.forEach(rowIdx => {
+              const rObj = wsExcelJs.getRow(rowIdx + 1);
+              const dtNaCelula = extrairValorCelulaExcelJs(rObj.getCell(colDT + 1).value);
+              if (ehCodigoDTValido(dtNaCelula)) {
+                rObj.getCell(colPlaca + 1).value = placaFmt;
+                rObj.getCell(colEntregador + 1).value = motoristaFmt;
+              }
+            });
+          }
+        });
+      }
+
+      const outBuffer = await wbExcelJs.xlsx.writeBuffer();
+      arquivoExportacaoPronto = new Uint8Array(outBuffer);
+
+      const rotasNaoAtendidas = rotas.filter(r => !r.veiculoAlocado);
+      renderizarResultadoRoteirizacao(rotas, rotasNaoAtendidas);
+      lucide.createIcons();
+
+      if (salvarBackup) {
+        enviarBackupDrive(arquivoExportacaoPronto, nomeArquivoGerado);
       }
     }
 
@@ -2043,6 +2223,19 @@
       const totalRotas = rotas.length;
       const alocadas = totalRotas - naoAtendidas.length;
       const totalCaixasGeral = Math.round(rotas.reduce((acc, r) => acc + r.totalCaixas, 0) * 100) / 100;
+
+      // Mapeia qual DT está usando cada veículo para sinalizar no dropdown
+      const veiculoParaDT = new Map();
+      rotas.forEach(r => {
+        if (r.veiculoAlocado) {
+          veiculoParaDT.set(String(r.veiculoAlocado.id), r.dt);
+        }
+      });
+
+      const veiculosElegiveis = frotaUnidade
+        .filter(v => !indisponiveisIds.has(String(v.id)))
+        .slice()
+        .sort((a, b) => a.motorista.localeCompare(b.motorista));
 
       kpiGrid.innerHTML = `
         <div class="kpi-card">
@@ -2067,26 +2260,57 @@
         const listaDTs = naoAtendidas.map(r => `DT ${r.dt} (${r.totalCaixas} cx)`).join(", ");
         alertBox.className = "alert-box alert-warning";
         alertBox.innerHTML = `
-          ⚠️ <b>ATENÇÃO ANTES DE BAIXAR:</b> ${naoAtendidas.length} rota(s) ficaram com <b>PLACA e ENTREGADOR em branco</b> por falta de veículo disponível ou capacidade insuficiente na unidade <b>${unidadeAtual}</b>:<br/>
+          ⚠️ <b>ATENÇÃO ANTES DE BAIXAR:</b> ${naoAtendidas.length} rota(s) estão com <b>PLACA e ENTREGADOR em branco</b>. Você pode selecionar um motorista manualmente na tabela abaixo antes de baixar:<br/>
           <span class="mono" style="font-size: 0.84rem; text-decoration: underline;">${listaDTs}</span>
         `;
       } else {
         alertBox.className = "alert-box alert-success";
         alertBox.innerHTML = `
-          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> foram alocadas (1 motorista por rota) no menor veículo compatível.
+          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> estão alocadas (com tolerância de até +5% de capacidade).
         `;
       }
 
       tbody.innerHTML = rotas.map(r => {
+        const idSelecionado = r.veiculoAlocado ? String(r.veiculoAlocado.id) : "";
+
+        const opcoesMotoristas = veiculosElegiveis.map(v => {
+          const idV = String(v.id);
+          const dtEmUso = veiculoParaDT.get(idV);
+          const capMax = capacidadeComTolerancia(v.capacidade);
+          const emOutraDT = dtEmUso && dtEmUso !== r.dt ? ` [em uso DT ${dtEmUso}]` : "";
+          const acimaTol = r.totalCaixas > capMax ? " ⚠️" : "";
+          return `<option value="${idV}" ${idV === idSelecionado ? "selected" : ""}>${v.motorista} • ${v.capacidade} cx (máx ${capMax})${emOutraDT}${acimaTol}</option>`;
+        }).join("");
+
+        const selectHtml = `
+          <select class="manual-driver-select ${!r.veiculoAlocado ? "unassigned" : ""}" onchange="alterarMotoristaManual('${r.dt}', this.value)">
+            <option value="" ${!r.veiculoAlocado ? "selected" : ""}>-- EM BRANCO (SEM VEÍCULO) --</option>
+            ${opcoesMotoristas}
+          </select>
+        `;
+
         if (r.veiculoAlocado) {
+          const capBase = Number(r.veiculoAlocado.capacidade);
+          const capMax = capacidadeComTolerancia(capBase);
+          const usouTolerancia = r.totalCaixas > capBase && r.totalCaixas <= capMax;
+          const excedeuTolerancia = r.totalCaixas > capMax;
+
+          let statusBadge = `<span class="tag-ok">ROTEIRIZADO</span>`;
+          if (excedeuTolerancia) {
+            statusBadge = `<span class="tag-pend">ACIMA +5%</span>`;
+          } else if (usouTolerancia) {
+            const pctExtra = (((r.totalCaixas - capBase) / capBase) * 100).toFixed(1);
+            statusBadge = `<span class="tag-tol">+${pctExtra}% TOLERÂNCIA</span>`;
+          }
+
           return `
             <tr>
               <td class="mono"><b>${r.dt}</b></td>
               <td class="mono"><b>${r.totalCaixas} cx</b></td>
               <td><span class="plate-badge mono">${normalizarPlaca(r.veiculoAlocado.placa)}</span></td>
-              <td><b>${r.veiculoAlocado.motorista.toUpperCase()}</b></td>
-              <td class="mono">${r.veiculoAlocado.capacidade} cx (${r.veiculoAlocado.tipo})</td>
-              <td><span class="tag-ok">ROTEIRIZADO</span></td>
+              <td>${selectHtml}</td>
+              <td class="mono">${capBase} cx <span style="color: var(--text-soft);">(máx ${capMax})</span></td>
+              <td>${statusBadge}</td>
             </tr>
           `;
         } else {
@@ -2095,7 +2319,7 @@
               <td class="mono"><b>${r.dt}</b></td>
               <td class="mono"><b>${r.totalCaixas} cx</b></td>
               <td style="color: var(--text-soft);"><i>EM BRANCO</i></td>
-              <td style="color: var(--text-soft);"><i>EM BRANCO</i></td>
+              <td>${selectHtml}</td>
               <td>-</td>
               <td><span class="tag-pend">SEM VEÍCULO</span></td>
             </tr>
@@ -2117,6 +2341,10 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      if (houveAjusteManual) {
+        enviarBackupDrive(arquivoExportacaoPronto, nomeArquivoGerado);
+      }
       mostrarToast("Download do Excel iniciado!");
     }
 
