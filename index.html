@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Roteirizador Rodalog</title>
+  <!-- Fontes modernas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <!-- SheetJS para leitura e processamento rápido da planilha -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
   <!-- ExcelJS para editar células preservando layout, cores, linhas e estilos originais -->
@@ -12,34 +16,48 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --bg-orange-top: #FF8A2B;
-      --bg-orange-mid: #FF5E00;
-      --bg-orange-deep: #D94100;
-      --bg-orange-dark: #AD2E00;
-      --card-bg: rgba(255, 255, 255, 0.14);
-      --card-bg-strong: rgba(24, 10, 2, 0.30);
-      --border-white: rgba(255, 255, 255, 0.38);
-      --text-white: #FFFFFF;
-      --text-soft: rgba(255, 255, 255, 0.90);
-      --success-bg: #15803D;
-      --danger-bg: #B91C1C;
-      --warn-bg: #92400E;
+      --orange-primary: #FF5E00;
+      --orange-bright: #FF8533;
+      --orange-deep: #C93B00;
+      --bg-dark: #0D0F14;
+      --bg-surface: rgba(20, 23, 31, 0.78);
+      --bg-surface-elevated: rgba(30, 35, 46, 0.85);
+      --bg-input: rgba(10, 12, 17, 0.65);
+      --border-subtle: rgba(255, 255, 255, 0.12);
+      --border-orange: rgba(255, 115, 29, 0.45);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --success: #10B981;
+      --success-soft: rgba(16, 185, 129, 0.16);
+      --danger: #EF4444;
+      --danger-soft: rgba(239, 68, 68, 0.16);
+      --warning: #F59E0B;
+      --warning-soft: rgba(245, 158, 11, 0.16);
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
     body {
-      background:
-        radial-gradient(circle at 50% 8%, rgba(255, 214, 153, 0.34) 0%, rgba(255, 138, 43, 0.08) 38%, transparent 65%),
-        linear-gradient(155deg, var(--bg-orange-top) 0%, var(--bg-orange-mid) 36%, var(--bg-orange-deep) 74%, var(--bg-orange-dark) 100%);
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 50% -8%, rgba(255, 94, 0, 0.42) 0%, rgba(255, 94, 0, 0.12) 34%, transparent 64%),
+        radial-gradient(circle at 90% 85%, rgba(255, 133, 51, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #13161F 0%, #0B0D12 100%);
       background-attachment: fixed;
-      color: var(--text-white);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -52,12 +70,13 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 45%, rgba(255, 220, 165, 0.35) 0%, transparent 60%),
-        linear-gradient(155deg, var(--bg-orange-top) 0%, var(--bg-orange-mid) 40%, var(--bg-orange-deep) 78%, var(--bg-orange-dark) 100%);
+        radial-gradient(circle at 50% 45%, rgba(255, 110, 26, 0.36) 0%, transparent 58%),
+        linear-gradient(160deg, #161923 0%, #0B0D12 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 22px;
       z-index: 9999;
       padding: 24px;
       transition: opacity 0.45s ease, visibility 0.45s ease;
@@ -70,31 +89,55 @@
     }
 
     #splash-screen img {
-      width: min(86vw, 480px);
-      max-height: min(48vh, 390px);
+      width: min(82vw, 440px);
+      max-height: min(44vh, 360px);
       height: auto;
       object-fit: contain;
-      animation: pulseLogo 1.6s ease-in-out infinite;
+      filter: drop-shadow(0 18px 36px rgba(255, 94, 0, 0.28));
+      animation: pulseLogo 1.7s ease-in-out infinite;
+    }
+
+    .splash-loader {
+      width: 140px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .splash-loader::after {
+      content: "";
+      display: block;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--orange-primary), var(--orange-bright));
+      border-radius: 999px;
+      animation: loadingBar 1.2s ease-in-out infinite;
     }
 
     @keyframes pulseLogo {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.045); }
+      50% { transform: scale(1.035); }
     }
 
-    /* CONTAINER SIMÉTRICO */
+    @keyframes loadingBar {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(240%); }
+    }
+
+    /* CONTAINER PRINCIPAL */
     .app-wrapper {
       width: 100%;
-      max-width: 960px;
-      padding: 20px 18px 36px;
+      max-width: 1000px;
+      padding: 22px 18px 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 22px;
       flex: 1;
     }
 
-    /* HEADER COM LOGO GRANDE E LIMPA */
+    /* HEADER MODERNO */
     header {
       width: 100%;
       display: flex;
@@ -106,77 +149,128 @@
     }
 
     .main-logo {
-      width: min(86vw, 450px);
-      max-height: clamp(160px, 26vw, 240px);
+      width: min(82vw, 390px);
+      max-height: clamp(140px, 23vw, 210px);
       height: auto;
       object-fit: contain;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+    }
+
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
 
     .system-title {
-      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      font-size: clamp(1.35rem, 3vw, 1.85rem);
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+      background: linear-gradient(135deg, #FFFFFF 25%, #FFB380 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .system-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
     }
 
     .unit-badge-bar {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
-      background: var(--card-bg-strong);
-      border: 1px solid var(--border-white);
-      padding: 8px 16px;
+      background: var(--bg-surface-elevated);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-orange);
+      padding: 8px 10px 8px 18px;
       border-radius: 999px;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .unit-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--orange-primary);
+      box-shadow: 0 0 10px var(--orange-primary);
     }
 
     .btn-change-unit {
-      background: #FFFFFF;
-      color: var(--bg-orange-dark);
+      background: linear-gradient(135deg, var(--orange-primary), var(--orange-deep));
+      color: #FFFFFF;
       border: none;
       border-radius: 999px;
-      padding: 4px 12px;
-      font-size: 0.78rem;
+      padding: 6px 14px;
+      font-size: 0.75rem;
       font-weight: 800;
       cursor: pointer;
       text-transform: uppercase;
-      transition: transform 0.15s ease;
+      letter-spacing: 0.4px;
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
 
     .btn-change-unit:hover {
-      transform: scale(1.04);
+      transform: scale(1.03);
+      filter: brightness(1.1);
     }
 
-    /* CARTÕES E SEÇÕES */
+    /* PAINÉIS GLASSMORPHISM */
     .panel {
       width: 100%;
-      background: var(--card-bg);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1.5px solid var(--border-white);
-      border-radius: 20px;
-      padding: 24px 20px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 26px 22px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.42);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .panel-title {
-      font-size: 1.15rem;
+      font-size: 1.08rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFFFFF;
+    }
+
+    .panel-title-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 94, 0, 0.16);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-bright);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      text-align: center;
+      flex-shrink: 0;
     }
 
-    /* GRADE SIMÉTRICA DAS UNIDADES */
+    /* GRADE DE UNIDADES */
     .units-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -192,12 +286,13 @@
     }
 
     .unit-card {
-      background: var(--card-bg-strong);
-      border: 2px solid var(--border-white);
-      border-radius: 16px;
-      padding: 22px 12px;
-      color: #FFFFFF;
-      font-size: 1.05rem;
+      position: relative;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px 14px;
+      color: var(--text-main);
+      font-size: 1rem;
       font-weight: 800;
       letter-spacing: 0.5px;
       cursor: pointer;
@@ -205,66 +300,105 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
+      gap: 12px;
+      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .unit-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 94, 0, 0.18), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.22s ease;
     }
 
     .unit-card:hover, .unit-card:active {
-      background: #FFFFFF;
-      color: var(--bg-orange-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      border-color: var(--orange-primary);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(255, 94, 0, 0.22);
     }
 
-    /* MENU PRINCIPAL DA UNIDADE */
+    .unit-card:hover::before {
+      opacity: 1;
+    }
+
+    .unit-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 94, 0, 0.14);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+    }
+
+    .unit-card:hover .unit-card-icon {
+      background: var(--orange-primary);
+      color: #FFFFFF;
+      transform: scale(1.06);
+    }
+
+    /* NAVEGAÇÃO PRINCIPAL DA UNIDADE */
     .main-actions {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
+    }
+
+    .nav-bar-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    @media (min-width: 640px) {
+      .nav-bar-grid {
+        grid-template-columns: 1.35fr 1fr 1fr;
+      }
     }
 
     .btn-hero-roteirizar {
-      width: 100%;
-      background: #FFFFFF;
-      color: var(--bg-orange-dark);
-      border: none;
-      border-radius: 18px;
-      padding: 22px 20px;
-      font-size: 1.25rem;
-      font-weight: 900;
+      background: linear-gradient(135deg, var(--orange-primary) 0%, var(--orange-deep) 100%);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 180, 130, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      font-size: 1.08rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      gap: 10px;
+      box-shadow: 0 10px 26px rgba(255, 94, 0, 0.32);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
     }
 
     .btn-hero-roteirizar:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.30);
-    }
-
-    .secondary-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      width: 100%;
+      box-shadow: 0 14px 32px rgba(255, 94, 0, 0.44);
+      filter: brightness(1.05);
     }
 
     .btn-secondary-nav {
-      background: var(--card-bg-strong);
-      color: #FFFFFF;
-      border: 1.5px solid var(--border-white);
-      border-radius: 16px;
-      padding: 16px 12px;
-      font-size: 0.98rem;
-      font-weight: 800;
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.4px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -273,214 +407,28 @@
       transition: all 0.18s ease;
     }
 
-    .btn-secondary-nav.active, .btn-secondary-nav:hover {
-      background: rgba(255, 255, 255, 0.26);
-      border-color: #FFFFFF;
+    .btn-secondary-nav:hover {
+      border-color: var(--border-orange);
+      background: rgba(255, 94, 0, 0.12);
     }
 
-    /* FORMULÁRIOS E INPUTS */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 640px) {
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-soft);
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 13px 14px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border-white);
-      background: rgba(255, 255, 255, 0.16);
+    .btn-secondary-nav.active {
+      background: rgba(255, 94, 0, 0.2);
+      border-color: var(--orange-primary);
       color: #FFFFFF;
-      font-size: 1rem;
-      font-weight: 700;
-      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(255, 94, 0, 0.35);
     }
 
-    .form-group input::placeholder {
-      color: rgba(255, 255, 255, 0.65);
-      font-weight: 500;
-    }
-
-    .form-group select option {
-      background: var(--bg-orange-dark);
-      color: #FFFFFF;
-    }
-
-    .form-group input:focus, .form-group select:focus {
-      border-color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.24);
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-      justify-content: center;
-    }
-
-    .btn-action {
-      flex: 1;
-      min-width: 130px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1.5px solid #FFFFFF;
-      font-size: 0.95rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-    }
-
-    .btn-action:active {
-      transform: scale(0.98);
-    }
-
-    .btn-save {
-      background: #FFFFFF;
-      color: var(--bg-orange-dark);
-    }
-
-    .btn-delete {
-      background: var(--danger-bg);
-      color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    .btn-cancel {
-      background: transparent;
-      color: #FFFFFF;
-    }
-
-    /* LISTA / BUSCA DE VEÍCULOS */
-    .search-box {
-      width: 100%;
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 14px 16px 14px 44px;
-      border-radius: 14px;
-      border: 1.5px solid #FFFFFF;
-      background: rgba(0, 0, 0, 0.22);
-      color: #FFFFFF;
-      font-size: 1rem;
-      font-weight: 700;
-      outline: none;
-    }
-
-    .search-box input::placeholder {
-      color: rgba(255, 255, 255, 0.72);
-    }
-
-    .search-box svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.85;
-    }
-
-    .vehicle-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .vehicle-item {
-      background: var(--card-bg-strong);
-      border: 1px solid var(--border-white);
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .vehicle-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .vehicle-info strong {
-      font-size: 1.05rem;
-      letter-spacing: 0.4px;
-    }
-
-    .vehicle-info span {
-      font-size: 0.86rem;
-      color: var(--text-soft);
-      font-weight: 600;
-    }
-
-    .vehicle-item-btns {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-mini {
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid #FFFFFF;
-      font-size: 0.8rem;
-      font-weight: 800;
-      cursor: pointer;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .btn-mini-edit {
-      background: #FFFFFF;
-      color: var(--bg-orange-dark);
-    }
-
-    .btn-mini-del {
-      background: var(--danger-bg);
-      color: #FFFFFF;
-    }
-
-    /* SELETOR DE INDISPONIBILIDADE ANTES DE ROTEIRIZAR */
-    .availability-box {
-      background: var(--card-bg-strong);
-      border: 1.5px solid var(--border-white);
-      border-radius: 16px;
-      padding: 16px;
+    /* STEPPER / PASSOS DA ROTEIRIZAÇÃO */
+    .step-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
       margin-bottom: 18px;
     }
 
-    .availability-header {
+    .step-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -489,31 +437,86 @@
       margin-bottom: 12px;
     }
 
-    .availability-header strong {
-      font-size: 0.98rem;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+    .step-title {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .step-number {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--orange-primary);
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     .availability-summary {
-      font-size: 0.84rem;
-      font-weight: 800;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid var(--border-white);
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
       padding: 5px 12px;
       border-radius: 999px;
+    }
+
+    .mini-filter-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .mini-filter-wrap input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      color: #FFFFFF;
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .mini-filter-wrap input:focus {
+      border-color: var(--orange-primary);
+    }
+
+    .mini-filter-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
     }
 
     .availability-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 8px;
-      max-height: 250px;
+      gap: 9px;
+      max-height: 260px;
       overflow-y: auto;
-      padding-right: 2px;
+      padding-right: 4px;
+    }
+
+    .availability-grid::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .availability-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
     }
 
     @media (min-width: 640px) {
@@ -527,176 +530,489 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border-white);
-      background: rgba(255, 255, 255, 0.10);
+      padding: 11px 13px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
       cursor: pointer;
       transition: all 0.16s ease;
       user-select: none;
     }
 
     .driver-toggle:hover {
-      background: rgba(255, 255, 255, 0.20);
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.24);
     }
 
     .driver-toggle.unavailable {
-      background: rgba(185, 28, 28, 0.55);
-      border-color: #FCA5A5;
-      opacity: 0.88;
+      background: var(--danger-soft);
+      border-color: rgba(239, 68, 68, 0.5);
     }
 
     .driver-toggle-text {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       min-width: 0;
     }
 
     .driver-toggle-text b {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+      color: #FFFFFF;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .driver-toggle-text span {
-      font-size: 0.78rem;
-      color: var(--text-soft);
+      font-size: 0.76rem;
+      color: var(--text-muted);
       font-weight: 600;
     }
 
     .status-pill {
       flex-shrink: 0;
-      font-size: 0.72rem;
-      font-weight: 900;
+      font-size: 0.68rem;
+      font-weight: 800;
       text-transform: uppercase;
-      padding: 4px 9px;
+      letter-spacing: 0.4px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid #FFFFFF;
     }
 
     .status-pill.ok {
-      background: var(--success-bg);
-      color: #FFFFFF;
+      background: var(--success-soft);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
     }
 
     .status-pill.off {
-      background: var(--danger-bg);
+      background: var(--danger);
       color: #FFFFFF;
     }
 
-    /* ÁREA DE ROTEIRIZAÇÃO */
+    /* ÁREA DE UPLOAD DRAG & DROP */
     .upload-zone {
-      border: 2px dashed #FFFFFF;
-      border-radius: 18px;
-      padding: 28px 18px;
+      position: relative;
+      border: 2px dashed rgba(255, 115, 29, 0.55);
+      border-radius: var(--radius-lg);
+      padding: 32px 20px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.16);
+      background: linear-gradient(180deg, rgba(255, 94, 0, 0.07) 0%, rgba(10, 12, 17, 0.45) 100%);
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      transition: background 0.2s ease;
+      gap: 12px;
+      transition: all 0.2s ease;
     }
 
-    .upload-zone:hover {
-      background: rgba(0, 0, 0, 0.26);
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--orange-primary);
+      background: linear-gradient(180deg, rgba(255, 94, 0, 0.16) 0%, rgba(10, 12, 17, 0.55) 100%);
+      transform: translateY(-1px);
+    }
+
+    .upload-icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255, 94, 0, 0.16);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .upload-zone input[type="file"] {
       display: none;
     }
 
+    /* KPIS E RESULTADO */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .kpi-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
     .alert-box {
       margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      line-height: 1.45;
-      border: 1.5px solid #FFFFFF;
+      padding: 15px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.5;
     }
 
     .alert-warning {
-      background: var(--warn-bg);
+      background: var(--warning-soft);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #FDE68A;
     }
 
     .alert-success {
-      background: var(--success-bg);
+      background: var(--success-soft);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #A7F3D0;
     }
 
     .alert-danger {
-      background: var(--danger-bg);
+      background: var(--danger-soft);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #FECACA;
     }
 
     .table-responsive {
       width: 100%;
       overflow-x: auto;
       margin-top: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 12, 17, 0.55);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       text-align: left;
-      background: rgba(0, 0, 0, 0.22);
     }
 
     th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
       white-space: nowrap;
     }
 
     th {
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(255, 255, 255, 0.04);
       font-weight: 800;
       text-transform: uppercase;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .tag-ok {
-      background: var(--success-bg);
-      padding: 3px 8px;
-      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--success-soft);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
       font-weight: 800;
-      font-size: 0.76rem;
+      font-size: 0.72rem;
     }
 
     .tag-pend {
-      background: var(--danger-bg);
-      padding: 3px 8px;
-      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--danger-soft);
+      color: #FCA5A5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
       font-weight: 800;
-      font-size: 0.76rem;
+      font-size: 0.72rem;
     }
 
-    /* ASSINATURA NO RODAPÉ */
+    /* FORMULÁRIOS E INPUTS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      color: #FFFFFF;
+      font-size: 0.98rem;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(148, 163, 184, 0.55);
+      font-weight: 500;
+    }
+
+    .form-group select option {
+      background: #161923;
+      color: #FFFFFF;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--orange-primary);
+      box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.18);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .btn-action {
+      flex: 1;
+      min-width: 150px;
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--orange-primary), var(--orange-deep));
+      color: #FFFFFF;
+      box-shadow: 0 8px 20px rgba(255, 94, 0, 0.28);
+    }
+
+    .btn-save:hover {
+      filter: brightness(1.07);
+    }
+
+    .btn-delete {
+      background: var(--danger-soft);
+      color: #FCA5A5;
+      border-color: rgba(239, 68, 68, 0.45);
+    }
+
+    .btn-cancel {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    /* LISTA / BUSCA DE VEÍCULOS */
+    .search-box {
+      width: 100%;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      color: #FFFFFF;
+      font-size: 0.96rem;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--orange-primary);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .vehicle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vehicle-item {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      transition: border-color 0.16s ease;
+    }
+
+    .vehicle-item:hover {
+      border-color: var(--border-orange);
+    }
+
+    .vehicle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .vehicle-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .plate-badge {
+      background: rgba(255, 94, 0, 0.16);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-bright);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .vehicle-info strong {
+      font-size: 0.98rem;
+      letter-spacing: 0.3px;
+    }
+
+    .vehicle-info span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .vehicle-item-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-mini {
+      padding: 8px 12px;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: filter 0.15s ease;
+    }
+
+    .btn-mini:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-mini-edit {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-subtle);
+      color: #FFFFFF;
+    }
+
+    .btn-mini-del {
+      background: var(--danger-soft);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    /* RODAPÉ */
     footer.signature-footer {
       width: 100%;
       text-align: center;
-      padding: 12px 16px 28px;
-      font-size: 0.9rem;
+      padding: 14px 16px 28px;
+      font-size: 0.86rem;
       font-weight: 600;
-      color: var(--text-soft);
+      color: var(--text-muted);
       margin-top: auto;
     }
 
     footer.signature-footer a {
-      color: #FFFFFF;
+      color: var(--orange-bright);
       font-weight: 800;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: opacity 0.15s ease;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 133, 51, 0.45);
+      padding-bottom: 1px;
+      transition: color 0.15s ease, border-color 0.15s ease;
     }
 
     footer.signature-footer a:hover {
-      opacity: 0.82;
+      color: #FFFFFF;
+      border-color: #FFFFFF;
     }
 
     .hidden {
@@ -706,27 +1022,29 @@
     /* TOAST NOTIFICAÇÃO */
     #toast {
       position: fixed;
-      bottom: 22px;
+      bottom: 24px;
       left: 50%;
-      transform: translateX(-50%);
-      background: #18181B;
+      transform: translateX(-50%) translateY(12px);
+      background: rgba(20, 23, 31, 0.96);
+      backdrop-filter: blur(12px);
       color: #FFFFFF;
-      border: 1.5px solid #FFFFFF;
+      border: 1px solid var(--border-orange);
       padding: 12px 22px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       z-index: 10000;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease;
       text-align: center;
       max-width: 90vw;
     }
 
     #toast.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </head>
@@ -735,52 +1053,60 @@
   <!-- TELA INICIAL (SPLASH 2 SEGUNDOS) -->
   <div id="splash-screen">
     <img src="logo.png" alt="Rodalog Logo" />
+    <div class="splash-loader"></div>
   </div>
 
   <!-- NOTIFICAÇÃO FLUTUANTE -->
   <div id="toast"></div>
 
   <div class="app-wrapper">
-    <!-- TOPO COM LOGO GRANDE -->
+    <!-- TOPO -->
     <header>
       <img src="logo.png" alt="Roteirizador Rodalog" class="main-logo" />
-      <h1 class="system-title">Roteirizador Rodalog</h1>
+      <div class="title-group">
+        <h1 class="system-title">Roteirizador Rodalog</h1>
+        <p class="system-subtitle">Alocação inteligente de frota por DT e capacidade</p>
+      </div>
 
       <div id="active-unit-bar" class="unit-badge-bar hidden">
+        <span class="unit-dot"></span>
         <span>UNIDADE: <strong id="current-unit-label">-</strong></span>
-        <button class="btn-change-unit" onclick="voltarSelecaoUnidade()">Trocar Unidade</button>
+        <button class="btn-change-unit" onclick="voltarSelecaoUnidade()">Trocar</button>
       </div>
     </header>
 
     <!-- TELA 1: ESCOLHA A UNIDADE -->
     <section id="view-unidades" class="panel">
-      <div class="panel-title">
-        <i data-lucide="map-pin"></i>
-        <span>Escolha a Unidade</span>
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="panel-title-icon"><i data-lucide="map-pin" size="18"></i></span>
+          <span>Selecione a Operação / Unidade</span>
+        </div>
       </div>
+
       <div class="units-grid">
         <button class="unit-card" onclick="selecionarUnidade('MIX POA')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>MIX POA</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('PELOTAS')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>PELOTAS</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('CHAPECO')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>CHAPECO</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('FLORIANOPOLIS')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>FLORIANOPOLIS</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('IJUI')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>IJUI</span>
         </button>
         <button class="unit-card" onclick="selecionarUnidade('SANTA MARIA')">
-          <i data-lucide="building-2"></i>
+          <span class="unit-card-icon"><i data-lucide="building-2" size="22"></i></span>
           <span>SANTA MARIA</span>
         </button>
       </div>
@@ -788,57 +1114,77 @@
 
     <!-- TELA 2: SISTEMA DA UNIDADE SELECIONADA -->
     <main id="view-sistema" class="main-actions hidden">
-      <!-- BOTÃO PRINCIPAL EM DESTAQUE: ROTEIRIZAR -->
-      <button class="btn-hero-roteirizar" onclick="abrirAba('roteirizar')">
-        <i data-lucide="route" size="28"></i>
-        <span>Roteirizar</span>
-      </button>
-
-      <!-- OPÇÕES SECUNDÁRIAS SIMÉTRICAS -->
-      <div class="secondary-actions-grid">
+      <!-- MENU DE NAVEGAÇÃO -->
+      <div class="nav-bar-grid">
+        <button id="nav-roteirizar" class="btn-hero-roteirizar" onclick="abrirAba('roteirizar')">
+          <i data-lucide="route" size="22"></i>
+          <span>Roteirizar</span>
+        </button>
         <button id="nav-cadastrar" class="btn-secondary-nav" onclick="abrirAba('cadastrar', true)">
-          <i data-lucide="truck"></i>
+          <i data-lucide="truck" size="19"></i>
           <span>Cadastrar Veículo</span>
         </button>
         <button id="nav-buscar" class="btn-secondary-nav" onclick="abrirAba('buscar')">
-          <i data-lucide="search"></i>
+          <i data-lucide="search" size="19"></i>
           <span>Buscar Veículo</span>
         </button>
       </div>
 
       <!-- SUBTELA A: ROTEIRIZAR (PRINCIPAL) -->
       <section id="tab-roteirizar" class="panel">
-        <div class="panel-title">
-          <i data-lucide="file-spreadsheet"></i>
-          <span>Roteirização Automática por DT</span>
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon"><i data-lucide="file-spreadsheet" size="18"></i></span>
+            <span>Roteirização Automática por DT</span>
+          </div>
         </div>
 
-        <!-- INDISPONIBILIDADE DE MOTORISTAS ANTES DO UPLOAD -->
-        <div class="availability-box">
-          <div class="availability-header">
-            <strong>
-              <i data-lucide="user-x" size="18"></i>
-              <span>1. Marcar Motoristas Indisponíveis</span>
-            </strong>
+        <!-- PASSO 1: INDISPONIBILIDADE DE MOTORISTAS -->
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-title">
+              <span class="step-number">1</span>
+              <span>Disponibilidade da Frota Hoje</span>
+            </div>
             <span id="availability-counter" class="availability-summary">0 indisponíveis</span>
           </div>
-          <p style="font-size: 0.83rem; color: var(--text-soft); margin-bottom: 10px;">
-            Toque nos motoristas que não vão rodar hoje para deixá-los fora do roteiro:
+
+          <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 12px;">
+            Toque nos motoristas que <b>não vão rodar hoje</b> para deixá-los fora da roteirização:
           </p>
+
+          <div class="mini-filter-wrap">
+            <i data-lucide="search" size="16"></i>
+            <input type="text" id="filtro-indisponibilidade" placeholder="Filtrar motorista ou placa..." oninput="renderizarSeletorIndisponibilidade()" />
+          </div>
+
           <div id="lista-indisponibilidade" class="availability-grid"></div>
         </div>
 
-        <label class="upload-zone" for="excel-input">
-          <i data-lucide="upload-cloud" size="40"></i>
-          <strong style="font-size: 1.05rem;">2. Toque para selecionar o Excel do cliente (.xlsx / .xls)</strong>
-          <span style="font-size: 0.85rem; opacity: 0.9;">
-            Preserva layout, cores e linhas • Lê <b>DT</b> numérica e total na linha amarela
-          </span>
-          <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
-        </label>
+        <!-- PASSO 2: IMPORTAR PLANILHA -->
+        <div class="step-card" style="margin-bottom: 0;">
+          <div class="step-header">
+            <div class="step-title">
+              <span class="step-number">2</span>
+              <span>Importar Planilha do Cliente</span>
+            </div>
+          </div>
 
-        <!-- RESULTADOS E AVISOS DA ROTEIRIZAÇÃO -->
+          <label id="drop-zone" class="upload-zone" for="excel-input">
+            <div class="upload-icon-circle">
+              <i data-lucide="upload-cloud" size="28"></i>
+            </div>
+            <strong style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
+            <span style="font-size: 0.83rem; color: var(--text-muted); max-width: 540px;">
+              Mantém cores, bordas e layout originais • Lê <b>DT numérica</b> e total da rota (<b>R / AS</b>), ignorando linhas <b>TOTAL</b>
+            </span>
+            <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
+          </label>
+        </div>
+
+        <!-- RESULTADOS DA ROTEIRIZAÇÃO -->
         <div id="routing-result-area" class="hidden">
+          <div id="routing-kpis" class="kpi-grid"></div>
           <div id="routing-alert" class="alert-box"></div>
 
           <div class="table-responsive">
@@ -859,7 +1205,7 @@
 
           <div class="btn-row">
             <button class="btn-action btn-save" onclick="baixarExcelAtualizado()">
-              <i data-lucide="download"></i>
+              <i data-lucide="download" size="19"></i>
               <span>Baixar Excel Roteirizado</span>
             </button>
           </div>
@@ -868,9 +1214,11 @@
 
       <!-- SUBTELA B: CADASTRAR / EDITAR VEÍCULO -->
       <section id="tab-cadastrar" class="panel hidden">
-        <div class="panel-title">
-          <i data-lucide="plus-circle"></i>
-          <span id="form-veiculo-titulo">Cadastrar Veículo</span>
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon"><i data-lucide="plus-circle" size="18"></i></span>
+            <span id="form-veiculo-titulo">Cadastrar Veículo</span>
+          </div>
         </div>
 
         <input type="hidden" id="veiculo-id" />
@@ -883,7 +1231,7 @@
 
           <div class="form-group">
             <label for="veiculo-placa">Placa (Sem Traço)</label>
-            <input type="text" id="veiculo-placa" maxlength="7" placeholder="EX: ABC1D23" style="text-transform: uppercase;" />
+            <input type="text" id="veiculo-placa" class="mono" maxlength="7" placeholder="EX: ABC1D23" style="text-transform: uppercase;" />
           </div>
 
           <div class="form-group">
@@ -900,21 +1248,21 @@
 
           <div class="form-group">
             <label for="veiculo-capacidade">Qtd. Média de Caixas que Cabe</label>
-            <input type="number" id="veiculo-capacidade" min="1" placeholder="EX: 350" />
+            <input type="number" id="veiculo-capacidade" class="mono" min="1" placeholder="EX: 350" />
           </div>
         </div>
 
         <div class="btn-row">
           <button class="btn-action btn-save" onclick="salvarVeiculo()">
-            <i data-lucide="save"></i>
-            <span>Salvar</span>
+            <i data-lucide="save" size="18"></i>
+            <span>Salvar Veículo</span>
           </button>
           <button id="btn-form-editar-novo" class="btn-action btn-cancel hidden" onclick="limparFormularioVeiculo()">
-            <i data-lucide="rotate-ccw"></i>
+            <i data-lucide="rotate-ccw" size="18"></i>
             <span>Limpar / Novo</span>
           </button>
           <button id="btn-form-deletar" class="btn-action btn-delete hidden" onclick="deletarVeiculoAtual()">
-            <i data-lucide="trash-2"></i>
+            <i data-lucide="trash-2" size="18"></i>
             <span>Deletar</span>
           </button>
         </div>
@@ -922,13 +1270,15 @@
 
       <!-- SUBTELA C: BUSCAR VEÍCULO -->
       <section id="tab-buscar" class="panel hidden">
-        <div class="panel-title">
-          <i data-lucide="search"></i>
-          <span>Buscar Veículo da Unidade</span>
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-title-icon"><i data-lucide="search" size="18"></i></span>
+            <span>Frota Cadastrada da Unidade</span>
+          </div>
         </div>
 
         <div class="search-box">
-          <i data-lucide="search" size="20"></i>
+          <i data-lucide="search" size="18"></i>
           <input type="text" id="campo-busca" placeholder="Pesquisar por motorista, placa ou tipo..." oninput="filtrarVeiculos()" />
         </div>
 
@@ -956,13 +1306,42 @@
     let arquivoExportacaoPronto = null;
     let nomeArquivoGerado = "";
 
-    // Inicializa ícones e Splash Screen de exatos 2 segundos
+    // Inicializa ícones, Drag & Drop e Splash Screen de 2 segundos
     window.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
+      configurarDragAndDrop();
       setTimeout(() => {
         document.getElementById("splash-screen").classList.add("hidden");
       }, 2000);
     });
+
+    function configurarDragAndDrop() {
+      const dropZone = document.getElementById("drop-zone");
+      if (!dropZone) return;
+
+      ["dragenter", "dragover"].forEach(evtName => {
+        dropZone.addEventListener(evtName, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add("dragover");
+        });
+      });
+
+      ["dragleave", "drop"].forEach(evtName => {
+        dropZone.addEventListener(evtName, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove("dragover");
+        });
+      });
+
+      dropZone.addEventListener("drop", e => {
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files.length > 0) {
+          lerArquivoSelecionado(files[0]);
+        }
+      });
+    }
 
     function mostrarToast(msg) {
       const toast = document.getElementById("toast");
@@ -1003,10 +1382,23 @@
       return String(cellValue).trim();
     }
 
-    // Valida se o código é realmente uma DT numérica (ex: 14329313 - 8 dígitos), ignorando códigos como "AS1"
+    // Valida se o código é realmente uma DT numérica (ex: 14329313), ignorando "R1", "AS1", "TOTAL ..." etc.
     function ehCodigoDTValido(valor) {
       const limpo = String(valor || "").trim();
       return /^\d{6,10}$/.test(limpo);
+    }
+
+    // Identifica linhas de resumo da rota no formato R1, R2, AS1, AS2 etc.
+    function ehResumoRota(valor) {
+      const norm = normalizarTexto(valor);
+      return /^(R|AS)\d+$/i.test(norm);
+    }
+
+    // Identifica linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", "TOTAL GERAL") para ignorar
+    function ehLinhaTotal(dtRaw, row) {
+      const dtNorm = normalizarTexto(dtRaw);
+      if (/^TOTAL(\b|\s|:|-|\d)/i.test(dtNorm)) return true;
+      return row.some(c => /^TOTAL(\b|\s|:|-|\d)/i.test(normalizarTexto(c)));
     }
 
     function parseNumeroPlanilha(val) {
@@ -1044,6 +1436,7 @@
       document.getElementById("view-sistema").classList.remove("hidden");
       document.getElementById("routing-result-area").classList.add("hidden");
       document.getElementById("excel-input").value = "";
+      document.getElementById("filtro-indisponibilidade").value = "";
 
       abrirAba("roteirizar");
       await carregarFrotaDaUnidade();
@@ -1112,24 +1505,38 @@
     function renderizarSeletorIndisponibilidade() {
       const container = document.getElementById("lista-indisponibilidade");
       const counter = document.getElementById("availability-counter");
+      const termoFiltro = normalizarTexto(document.getElementById("filtro-indisponibilidade")?.value || "");
 
       const totalIndisp = indisponiveisIds.size;
       const totalDisp = Math.max(0, frotaUnidade.length - totalIndisp);
       counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disponível(is)`;
 
       if (!frotaUnidade || frotaUnidade.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; opacity:0.85; padding: 6px;">Nenhum veículo cadastrado nesta unidade.</p>`;
+        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-muted); padding: 6px;">Nenhum veículo cadastrado nesta unidade.</p>`;
         return;
       }
 
-      container.innerHTML = frotaUnidade.map(v => {
+      const listaFiltrada = termoFiltro
+        ? frotaUnidade.filter(v =>
+            normalizarTexto(v.motorista).includes(termoFiltro) ||
+            normalizarTexto(v.placa).includes(termoFiltro) ||
+            normalizarTexto(v.tipo).includes(termoFiltro)
+          )
+        : frotaUnidade;
+
+      if (listaFiltrada.length === 0) {
+        container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-muted); padding: 6px;">Nenhum motorista encontrado para "${termoFiltro}".</p>`;
+        return;
+      }
+
+      container.innerHTML = listaFiltrada.map(v => {
         const idStr = String(v.id);
         const isOff = indisponiveisIds.has(idStr);
         return `
           <div class="driver-toggle ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
             <div class="driver-toggle-text">
               <b>${v.motorista}</b>
-              <span>${v.placa} • ${v.tipo} (${v.capacidade} cx)</span>
+              <span class="mono">${v.placa} • ${v.tipo} (${v.capacidade} cx)</span>
             </div>
             <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "INDISPONÍVEL" : "DISPONÍVEL"}</span>
           </div>
@@ -1261,15 +1668,18 @@
     function renderizarListaVeiculos(lista) {
       const container = document.getElementById("lista-veiculos");
       if (!lista || lista.length === 0) {
-        container.innerHTML = `<p style="text-align:center; opacity:0.85; padding: 14px;">Nenhum veículo encontrado nesta unidade.</p>`;
+        container.innerHTML = `<p style="text-align:center; color: var(--text-muted); padding: 18px;">Nenhum veículo encontrado nesta unidade.</p>`;
         return;
       }
 
       container.innerHTML = lista.map(v => `
         <div class="vehicle-item">
           <div class="vehicle-info">
-            <strong>${v.placa} • ${v.motorista}</strong>
-            <span>${v.tipo} — Capacidade: <b>${v.capacidade} cx</b></span>
+            <div class="vehicle-title-row">
+              <span class="plate-badge mono">${v.placa}</span>
+              <strong>${v.motorista}</strong>
+            </div>
+            <span>${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b></span>
           </div>
           <div class="vehicle-item-btns">
             <button class="btn-mini btn-mini-edit" onclick="editarVeiculo('${v.id}')">
@@ -1290,10 +1700,13 @@
     function processarArquivoExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
+      lerArquivoSelecionado(file);
+    }
 
+    function lerArquivoSelecionado(file) {
       const frotaAtiva = frotaUnidade.filter(v => !indisponiveisIds.has(String(v.id)));
       if (frotaAtiva.length === 0) {
-        mostrarToast("Não há motoristas disponíveis para roteirizar!");
+        mostrarToast("Atenção: não há motoristas disponíveis marcados hoje!");
       }
 
       const reader = new FileReader();
@@ -1370,19 +1783,23 @@
         for (let i = headerRowIdx + 1; i < rows.length; i++) {
           const row = rows[i];
           const dtRaw = String(row[colDT] || "").trim();
-          const dtNorm = normalizarTexto(dtRaw);
-          const cxVal = parseNumeroPlanilha(row[colCX]);
 
+          // Ignora completamente linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", etc.)
+          if (ehLinhaTotal(dtRaw, row)) {
+            continue;
+          }
+
+          const cxVal = parseNumeroPlanilha(row[colCX]);
           const cellExcelJs = wsExcelJs ? wsExcelJs.getRow(i + 1).getCell(colCX + 1) : null;
           const linhaTemAmarelo = cellExcelJs ? corEhAmarela(cellExcelJs.fill) : false;
 
-          // Só considera rota se a coluna DT tiver os dígitos numéricos da DT (ex: 14329313)
+          // Linha real de entrega: possui DT numérica (6 a 10 dígitos) e não é linha amarela de resumo
           if (ehCodigoDTValido(dtRaw) && !linhaTemAmarelo) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
                 dt: dtRaw,
                 valoresParada: [],
-                valorLinhaAmarela: null,
+                valorResumoRota: null,
                 linhasDT: []
               });
             }
@@ -1393,14 +1810,13 @@
             continue;
           }
 
-          // Linha amarela de total da rota (ex: primeira coluna com "AS1" ou vazia, sem DT numérica):
-          // Captura o total de caixas para a rota acima e NÃO adiciona essa linha em linhasDT
-          if (ultimaRotaAtiva && cxVal > 0 && !dtNorm.includes("GERAL")) {
-            const somaParadas = ultimaRotaAtiva.valoresParada.reduce((acc, v) => acc + v, 0);
-            if (linhaTemAmarelo || cxVal >= somaParadas || ultimaRotaAtiva.valoresParada.length > 0) {
-              ultimaRotaAtiva.valorLinhaAmarela = cxVal;
-              ultimaRotaAtiva = null;
+          // Linha de resumo da rota (R1, R2, AS1, AS2 ou linha amarela sem DT numérica):
+          // Define o total de caixas da rota acima e NUNCA recebe motorista/placa
+          if (ultimaRotaAtiva && (ehResumoRota(dtRaw) || linhaTemAmarelo || (!dtRaw && cxVal > 0))) {
+            if (cxVal > 0) {
+              ultimaRotaAtiva.valorResumoRota = cxVal;
             }
+            ultimaRotaAtiva = null;
           }
         }
 
@@ -1408,8 +1824,8 @@
         rotasMap.forEach(grupo => {
           let totalCarga = 0;
 
-          if (grupo.valorLinhaAmarela !== null && grupo.valorLinhaAmarela > 0) {
-            totalCarga = grupo.valorLinhaAmarela;
+          if (grupo.valorResumoRota !== null && grupo.valorResumoRota > 0) {
+            totalCarga = grupo.valorResumoRota;
           } else {
             const naoVazios = grupo.valoresParada.filter(v => v > 0);
             const todosIguais =
@@ -1451,7 +1867,7 @@
           }
         });
 
-        // Grava no ExcelJS preservando estilos e preenchendo SOMENTE linhas com DT numérica
+        // Grava no ExcelJS preservando estilos e preenchendo SOMENTE linhas com DT numérica válida
         if (wsExcelJs) {
           const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
           const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
@@ -1501,22 +1917,46 @@
 
     function renderizarResultadoRoteirizacao(rotas, naoAtendidas) {
       const area = document.getElementById("routing-result-area");
+      const kpiGrid = document.getElementById("routing-kpis");
       const alertBox = document.getElementById("routing-alert");
       const tbody = document.getElementById("routing-preview-body");
 
       area.classList.remove("hidden");
 
+      const totalRotas = rotas.length;
+      const alocadas = totalRotas - naoAtendidas.length;
+      const totalCaixasGeral = Math.round(rotas.reduce((acc, r) => acc + r.totalCaixas, 0) * 100) / 100;
+
+      kpiGrid.innerHTML = `
+        <div class="kpi-card">
+          <span class="kpi-label">Total de DTs</span>
+          <span class="kpi-value mono">${totalRotas}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Alocadas</span>
+          <span class="kpi-value mono" style="color: #34D399;">${alocadas}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Sem Veículo</span>
+          <span class="kpi-value mono" style="color: ${naoAtendidas.length > 0 ? "#FCA5A5" : "#94A3B8"};">${naoAtendidas.length}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Volume Total</span>
+          <span class="kpi-value mono">${totalCaixasGeral} cx</span>
+        </div>
+      `;
+
       if (naoAtendidas.length > 0) {
         const listaDTs = naoAtendidas.map(r => `DT ${r.dt} (${r.totalCaixas} cx)`).join(", ");
         alertBox.className = "alert-box alert-warning";
         alertBox.innerHTML = `
-          ⚠️ <b>ATENÇÃO ANTES DE BAIXAR:</b> ${naoAtendidas.length} rota(s) ficaram com <b>PLACA e ENTREGADOR em branco</b> por falta de veículo disponível ou capacidade insuficiente na unidade ${unidadeAtual}:<br/>
-          <span style="text-decoration: underline;">${listaDTs}</span>
+          ⚠️ <b>ATENÇÃO ANTES DE BAIXAR:</b> ${naoAtendidas.length} rota(s) ficaram com <b>PLACA e ENTREGADOR em branco</b> por falta de veículo disponível ou capacidade insuficiente na unidade <b>${unidadeAtual}</b>:<br/>
+          <span class="mono" style="font-size: 0.84rem; text-decoration: underline;">${listaDTs}</span>
         `;
       } else {
         alertBox.className = "alert-box alert-success";
         alertBox.innerHTML = `
-          ✅ <b>ROTEIRIZAÇÃO 100% CONCLUÍDA!</b> Todas as ${rotas.length} rotas (DTs) da unidade <b>${unidadeAtual}</b> foram alocadas (1 motorista por rota) no menor veículo compatível.
+          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> foram alocadas (1 motorista por rota) no menor veículo compatível.
         `;
       }
 
@@ -1524,21 +1964,21 @@
         if (r.veiculoAlocado) {
           return `
             <tr>
-              <td><b>${r.dt}</b></td>
-              <td><b>${r.totalCaixas} cx</b></td>
-              <td><b>${normalizarPlaca(r.veiculoAlocado.placa)}</b></td>
-              <td>${r.veiculoAlocado.motorista.toUpperCase()}</td>
-              <td>${r.veiculoAlocado.capacidade} cx (${r.veiculoAlocado.tipo})</td>
+              <td class="mono"><b>${r.dt}</b></td>
+              <td class="mono"><b>${r.totalCaixas} cx</b></td>
+              <td><span class="plate-badge mono">${normalizarPlaca(r.veiculoAlocado.placa)}</span></td>
+              <td><b>${r.veiculoAlocado.motorista.toUpperCase()}</b></td>
+              <td class="mono">${r.veiculoAlocado.capacidade} cx (${r.veiculoAlocado.tipo})</td>
               <td><span class="tag-ok">ROTEIRIZADO</span></td>
             </tr>
           `;
         } else {
           return `
             <tr>
-              <td><b>${r.dt}</b></td>
-              <td><b>${r.totalCaixas} cx</b></td>
-              <td><i>EM BRANCO</i></td>
-              <td><i>EM BRANCO</i></td>
+              <td class="mono"><b>${r.dt}</b></td>
+              <td class="mono"><b>${r.totalCaixas} cx</b></td>
+              <td style="color: var(--text-muted);"><i>EM BRANCO</i></td>
+              <td style="color: var(--text-muted);"><i>EM BRANCO</i></td>
               <td>-</td>
               <td><span class="tag-pend">SEM VEÍCULO</span></td>
             </tr>
