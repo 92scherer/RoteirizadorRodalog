@@ -10,14 +10,15 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --bg-orange: #F25C05;
-      --bg-orange-dark: #D9480F;
-      --bg-orange-light: #FF751F;
+      --bg-orange-top: #FF8A2B;
+      --bg-orange-mid: #FF5E00;
+      --bg-orange-deep: #D94100;
+      --bg-orange-dark: #AD2E00;
       --card-bg: rgba(255, 255, 255, 0.14);
-      --card-bg-strong: rgba(20, 12, 8, 0.28);
-      --border-white: rgba(255, 255, 255, 0.35);
+      --card-bg-strong: rgba(24, 10, 2, 0.30);
+      --border-white: rgba(255, 255, 255, 0.38);
       --text-white: #FFFFFF;
-      --text-soft: rgba(255, 255, 255, 0.88);
+      --text-soft: rgba(255, 255, 255, 0.90);
       --success-bg: #15803D;
       --danger-bg: #B91C1C;
       --warn-bg: #92400E;
@@ -32,7 +33,10 @@
     }
 
     body {
-      background: linear-gradient(160deg, var(--bg-orange-light) 0%, var(--bg-orange) 45%, var(--bg-orange-dark) 100%);
+      background:
+        radial-gradient(circle at 50% 8%, rgba(255, 214, 153, 0.34) 0%, rgba(255, 138, 43, 0.08) 38%, transparent 65%),
+        linear-gradient(155deg, var(--bg-orange-top) 0%, var(--bg-orange-mid) 36%, var(--bg-orange-deep) 74%, var(--bg-orange-dark) 100%);
+      background-attachment: fixed;
       color: var(--text-white);
       min-height: 100vh;
       display: flex;
@@ -41,16 +45,58 @@
       overflow-x: hidden;
     }
 
+    /* EFEITO DE DESTAQUE ATRÁS DO LOGO */
+    .logo-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 28px;
+    }
+
+    .logo-stage::before {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 34px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.34) 0%, rgba(255, 224, 178, 0.14) 52%, transparent 76%);
+      filter: blur(12px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .logo-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.42);
+      box-shadow:
+        0 14px 34px rgba(82, 20, 0, 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .logo-stage img {
+      position: relative;
+      z-index: 1;
+    }
+
     /* SPLASH SCREEN 2 SEGUNDOS */
     #splash-screen {
       position: fixed;
       inset: 0;
-      background: linear-gradient(160deg, var(--bg-orange-light) 0%, var(--bg-orange) 50%, var(--bg-orange-dark) 100%);
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 220, 165, 0.35) 0%, transparent 60%),
+        linear-gradient(155deg, var(--bg-orange-top) 0%, var(--bg-orange-mid) 40%, var(--bg-orange-deep) 78%, var(--bg-orange-dark) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      padding: 24px;
       transition: opacity 0.45s ease, visibility 0.45s ease;
     }
 
@@ -60,17 +106,23 @@
       pointer-events: none;
     }
 
+    #splash-screen .logo-stage {
+      padding: 24px 32px;
+      border-radius: 36px;
+    }
+
     #splash-screen img {
-      width: min(72vw, 340px);
+      width: min(84vw, 460px);
+      max-height: min(46vh, 380px);
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.25));
+      filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.3));
       animation: pulseLogo 1.6s ease-in-out infinite;
     }
 
     @keyframes pulseLogo {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
+      50% { transform: scale(1.045); }
     }
 
     /* CONTAINER SIMÉTRICO */
@@ -91,23 +143,30 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 10px;
-      padding-top: 6px;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    header .logo-stage {
+      padding: 16px 26px;
+      border-radius: 28px;
+      max-width: 100%;
     }
 
     .main-logo {
-      width: min(68vw, 290px);
-      max-height: 120px;
+      width: min(82vw, 430px);
+      max-height: clamp(145px, 24vw, 220px);
+      height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.2));
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.25));
     }
 
     .system-title {
-      font-size: clamp(1.35rem, 3vw, 1.85rem);
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
       font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
     }
 
     .unit-badge-bar {
@@ -150,7 +209,7 @@
       border: 1.5px solid var(--border-white);
       border-radius: 20px;
       padding: 24px 20px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
     }
 
     .panel-title {
@@ -203,7 +262,7 @@
       background: #FFFFFF;
       color: var(--bg-orange-dark);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
     }
 
     /* MENU PRINCIPAL DA UNIDADE */
@@ -230,13 +289,13 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .btn-hero-roteirizar:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.30);
     }
 
     .secondary-actions-grid {
@@ -586,7 +645,9 @@
 
   <!-- TELA INICIAL (SPLASH 2 SEGUNDOS) -->
   <div id="splash-screen">
-    <img src="logo.png" alt="Rodalog Logo" />
+    <div class="logo-stage">
+      <img src="logo.png" alt="Rodalog Logo" />
+    </div>
   </div>
 
   <!-- NOTIFICAÇÃO FLUTUANTE -->
@@ -595,7 +656,9 @@
   <div class="app-wrapper">
     <!-- TOPO COM LOGO GRANDE -->
     <header>
-      <img src="logo.png" alt="Roteirizador Rodalog" class="main-logo" />
+      <div class="logo-stage">
+        <img src="logo.png" alt="Roteirizador Rodalog" class="main-logo" />
+      </div>
       <h1 class="system-title">Roteirizador Rodalog</h1>
 
       <div id="active-unit-bar" class="unit-badge-bar hidden">
