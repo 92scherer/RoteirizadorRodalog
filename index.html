@@ -986,10 +986,28 @@
         .trim();
     }
 
+    function extrairValorCelulaExcelJs(cellValue) {
+      if (cellValue === null || cellValue === undefined) return "";
+      if (typeof cellValue === "object") {
+        if ("result" in cellValue && cellValue.result !== null && cellValue.result !== undefined) {
+          return String(cellValue.result).trim();
+        }
+        if ("richText" in cellValue && Array.isArray(cellValue.richText)) {
+          return cellValue.richText.map(part => part.text || "").join("").trim();
+        }
+        if ("text" in cellValue) {
+          return String(cellValue.text).trim();
+        }
+        return "";
+      }
+      return String(cellValue).trim();
+    }
+
     function parseNumeroPlanilha(val) {
       if (typeof val === "number") return Number.isFinite(val) ? val : 0;
-      if (val && typeof val === "object" && "result" in val) {
-        return parseNumeroPlanilha(val.result);
+      if (val && typeof val === "object") {
+        if ("result" in val) return parseNumeroPlanilha(val.result);
+        if ("text" in val) return parseNumeroPlanilha(val.text);
       }
       let s = String(val || "").trim();
       if (!s) return 0;
@@ -1288,6 +1306,18 @@
       return argb.endsWith("FFFF00") || argb.endsWith("FFF2CC") || argb.endsWith("FFE699") || argb.endsWith("FFEB9C");
     }
 
+    function linhaTemDTValida(ws, rowIdx0, colDT0) {
+      if (!ws) return false;
+      const cell = ws.getRow(rowIdx0 + 1).getCell(colDT0 + 1);
+      const val = extrairValorCelulaExcelJs(cell.value);
+      const norm = normalizarTexto(val);
+      if (!val) return false;
+      if (norm.startsWith("TOTAL") || norm.startsWith("RESUMO") || norm.startsWith("SUBTOTAL")) {
+        return false;
+      }
+      return true;
+    }
+
     async function executarRoteirizacaoNoBuffer(buffer, originalFileName, salvarBackup) {
       try {
         const workbookXlsx = XLSX.read(buffer, { type: "array" });
@@ -1429,7 +1459,7 @@
           }
         });
 
-        // Grava no ExcelJS preservando estilos existentes das células
+        // Grava no ExcelJS preservando estilos e garantindo que linhas sem DT fiquem em branco
         if (wsExcelJs) {
           const headerRow = wsExcelJs.getRow(headerRowIdx + 1);
           const cellHdrPlaca = headerRow.getCell(colPlaca + 1);
@@ -1437,7 +1467,8 @@
           if (!String(cellHdrPlaca.value || "").trim()) cellHdrPlaca.value = "PLACA";
           if (!String(cellHdrEntr.value || "").trim()) cellHdrEntr.value = "ENTREGADOR";
 
-          for (let i = headerRowIdx + 1; i < rows.length; i++) {
+          const totalLinhasExcel = Math.max(rows.length, wsExcelJs.rowCount);
+          for (let i = headerRowIdx + 1; i < totalLinhasExcel; i++) {
             const rObj = wsExcelJs.getRow(i + 1);
             rObj.getCell(colPlaca + 1).value = null;
             rObj.getCell(colEntregador + 1).value = null;
@@ -1449,9 +1480,11 @@
               const motoristaFmt = rota.veiculoAlocado.motorista.toUpperCase().trim();
 
               rota.linhasDT.forEach(rowIdx => {
-                const rObj = wsExcelJs.getRow(rowIdx + 1);
-                rObj.getCell(colPlaca + 1).value = placaFmt;
-                rObj.getCell(colEntregador + 1).value = motoristaFmt;
+                if (linhaTemDTValida(wsExcelJs, rowIdx, colDT)) {
+                  const rObj = wsExcelJs.getRow(rowIdx + 1);
+                  rObj.getCell(colPlaca + 1).value = placaFmt;
+                  rObj.getCell(colEntregador + 1).value = motoristaFmt;
+                }
               });
             }
           });
