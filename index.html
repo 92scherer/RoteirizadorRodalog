@@ -1327,7 +1327,6 @@
           rows[headerRowIdx][colEntregador] = "ENTREGADOR";
         }
 
-        // Verifica se a célula na coluna CX tem preenchimento amarelo no Excel
         function isCelulaAmarela(rowIdx, colIdx) {
           const addr = XLSX.utils.encode_cell({ r: rowIdx, c: colIdx });
           const cell = worksheet[addr];
@@ -1347,18 +1346,19 @@
           const cxVal = parseNumeroPlanilha(row[colCX]);
           const linhaTemAmarelo = isCelulaAmarela(i, colCX);
 
-          // Linha com DT preenchida (linha de cliente/parada da rota)
+          // Linha com DT preenchida: faz parte da rota e receberá PLACA e ENTREGADOR
           if (dtRaw && !dtNorm.startsWith("TOTAL") && !dtNorm.startsWith("RESUMO") && !dtNorm.startsWith("SUBTOTAL")) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
                 dt: dtRaw,
                 valoresParada: [],
                 valorLinhaAmarela: null,
-                linhasIndices: []
+                linhasDT: [],
+                linhasSubtotal: []
               });
             }
             const grupo = rotasMap.get(dtRaw);
-            grupo.linhasIndices.push(i);
+            grupo.linhasDT.push(i);
             if (linhaTemAmarelo && cxVal > 0) {
               grupo.valorLinhaAmarela = cxVal;
             } else {
@@ -1368,13 +1368,15 @@
             continue;
           }
 
-          // Linha sem DT (ou linha de subtotal): pode ser a linha amarela de total da última rota
+          // Linha sem DT (linha amarela de total da rota): garante que não receba motorista/placa
+          rows[i][colPlaca] = "";
+          rows[i][colEntregador] = "";
+
           if (ultimaRotaAtiva && cxVal > 0 && !dtNorm.includes("GERAL")) {
             const somaParadas = ultimaRotaAtiva.valoresParada.reduce((acc, v) => acc + v, 0);
-            // Se a célula for amarela ou o valor bater com o total da rota (maior ou igual às paradas), usa como total da rota
             if (linhaTemAmarelo || cxVal >= somaParadas || ultimaRotaAtiva.valoresParada.length > 0) {
               ultimaRotaAtiva.valorLinhaAmarela = cxVal;
-              ultimaRotaAtiva.linhasIndices.push(i);
+              ultimaRotaAtiva.linhasSubtotal.push(i);
               ultimaRotaAtiva = null;
             }
           }
@@ -1400,15 +1402,13 @@
           rotasConsolidadas.push({
             dt: grupo.dt,
             totalCaixas: Math.round(totalCarga * 100) / 100,
-            linhasIndices: grupo.linhasIndices,
+            linhasDT: grupo.linhasDT,
             veiculoAlocado: null
           });
         });
 
-        // Ordena rotas da maior carga para a menor carga
         rotasConsolidadas.sort((a, b) => b.totalCaixas - a.totalCaixas);
 
-        // 1 motorista por rota: exclui indisponíveis e escolhe o menor veículo disponível que comporte a carga
         const veiculosDisponiveis = frotaUnidade
           .filter(v => !indisponiveisIds.has(String(v.id)))
           .map(v => ({ ...v, usado: false }))
@@ -1425,12 +1425,12 @@
             veiculoIdeal.usado = true;
             rota.veiculoAlocado = veiculoIdeal;
 
-            rota.linhasIndices.forEach(rowIdx => {
+            rota.linhasDT.forEach(rowIdx => {
               rows[rowIdx][colPlaca] = normalizarPlaca(veiculoIdeal.placa);
               rows[rowIdx][colEntregador] = veiculoIdeal.motorista.toUpperCase().trim();
             });
           } else {
-            rota.linhasIndices.forEach(rowIdx => {
+            rota.linhasDT.forEach(rowIdx => {
               rows[rowIdx][colPlaca] = "";
               rows[rowIdx][colEntregador] = "";
             });
