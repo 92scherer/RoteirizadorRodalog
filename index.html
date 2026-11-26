@@ -65,7 +65,7 @@
       overflow-x: hidden;
     }
 
-    /* SPLASH SCREEN 2 SEGUNDOS */
+    /* SPLASH SCREEN 2 SEGUNDOS (LOGO AMPLIADO) */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -76,9 +76,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 22px;
+      gap: 26px;
       z-index: 9999;
-      padding: 24px;
+      padding: 20px;
       transition: opacity 0.45s ease, visibility 0.45s ease;
     }
 
@@ -89,16 +89,16 @@
     }
 
     #splash-screen img {
-      width: min(82vw, 440px);
-      max-height: min(44vh, 360px);
+      width: min(94vw, 680px);
+      max-height: min(62vh, 520px);
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 16px 32px rgba(90, 22, 0, 0.32));
+      filter: drop-shadow(0 18px 36px rgba(90, 22, 0, 0.34));
       animation: pulseLogo 1.7s ease-in-out infinite;
     }
 
     .splash-loader {
-      width: 148px;
+      width: 168px;
       height: 5px;
       background: rgba(255, 255, 255, 0.24);
       border-radius: 999px;
@@ -129,7 +129,7 @@
     .app-wrapper {
       width: 100%;
       max-width: 1000px;
-      padding: 22px 18px 36px;
+      padding: 18px 18px 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -137,23 +137,23 @@
       flex: 1;
     }
 
-    /* HEADER MODERNO */
+    /* HEADER MODERNO (LOGO BEM MAIOR) */
     header {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 12px;
-      padding-top: 4px;
+      gap: 10px;
+      padding-top: 2px;
     }
 
     .main-logo {
-      width: min(82vw, 390px);
-      max-height: clamp(140px, 23vw, 210px);
+      width: min(94vw, 620px);
+      max-height: clamp(210px, 34vw, 340px);
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 12px 24px rgba(85, 20, 0, 0.28));
+      filter: drop-shadow(0 14px 28px rgba(85, 20, 0, 0.30));
     }
 
     .title-group {
