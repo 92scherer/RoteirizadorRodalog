@@ -16,23 +16,22 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --orange-top: #FF8C2E;
-      --orange-main: #FF5E00;
-      --orange-deep: #DC4100;
-      --orange-dark: #A32900;
-      --orange-ink: #9E2700;
-      --glass-surface: rgba(26, 10, 2, 0.30);
-      --glass-elevated: rgba(18, 7, 1, 0.44);
-      --glass-input: rgba(14, 5, 1, 0.40);
-      --border-subtle: rgba(255, 255, 255, 0.24);
-      --border-strong: rgba(255, 255, 255, 0.52);
-      --text-main: #FFFFFF;
-      --text-soft: rgba(255, 255, 255, 0.84);
+      --bg-void: #030712;
+      --bg-deep: #070D1B;
+      --bg-slate: #0F172A;
+      --cyan-neon: #22D3EE;
+      --cyan-bright: #38BDF8;
+      --blue-electric: #3B82F6;
+      --violet-glow: #8B5CF6;
+      --glass-surface: rgba(15, 23, 42, 0.54);
+      --glass-elevated: rgba(7, 12, 26, 0.68);
+      --glass-input: rgba(3, 7, 18, 0.66);
+      --border-subtle: rgba(56, 189, 248, 0.22);
+      --border-strong: rgba(56, 189, 248, 0.55);
+      --text-main: #F8FAFC;
+      --text-soft: rgba(203, 213, 225, 0.82);
       --success: #10B981;
-      --success-bg: rgba(16, 185, 129, 0.24);
-      --danger: #EF4444;
-      --danger-bg: rgba(220, 38, 38, 0.34);
-      --warning-bg: rgba(245, 158, 11, 0.28);
+      --danger: #F43F5E;
       --radius-xl: 24px;
       --radius-lg: 16px;
       --radius-md: 12px;
@@ -51,11 +50,15 @@
     }
 
     body {
-      background-color: var(--orange-main);
+      background-color: var(--bg-void);
       background-image:
-        radial-gradient(circle at 50% -6%, rgba(255, 224, 178, 0.46) 0%, rgba(255, 152, 56, 0.14) 38%, transparent 66%),
-        radial-gradient(circle at 92% 88%, rgba(255, 183, 107, 0.22) 0%, transparent 48%),
-        linear-gradient(155deg, var(--orange-top) 0%, var(--orange-main) 38%, var(--orange-deep) 76%, var(--orange-dark) 100%);
+        linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+        radial-gradient(circle at 50% -8%, rgba(34, 211, 238, 0.24) 0%, rgba(59, 130, 246, 0.10) 38%, transparent 68%),
+        radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.20) 0%, transparent 50%),
+        radial-gradient(circle at 10% 75%, rgba(16, 185, 129, 0.12) 0%, transparent 46%),
+        linear-gradient(160deg, var(--bg-void) 0%, var(--bg-deep) 48%, var(--bg-slate) 100%);
+      background-size: 38px 38px, 38px 38px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
       background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
@@ -65,13 +68,13 @@
       overflow-x: hidden;
     }
 
-    /* SPLASH SCREEN 2 SEGUNDOS (LOGO MAXIMIZADO) */
+    /* SPLASH SCREEN 2 SEGUNDOS (LOGO MAXIMIZADO FUTURISTA) */
     #splash-screen {
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 44%, rgba(255, 226, 182, 0.42) 0%, transparent 58%),
-        linear-gradient(155deg, var(--orange-top) 0%, var(--orange-main) 40%, var(--orange-deep) 78%, var(--orange-dark) 100%);
+        radial-gradient(circle at 50% 44%, rgba(34, 211, 238, 0.22) 0%, rgba(139, 92, 246, 0.10) 40%, transparent 65%),
+        linear-gradient(160deg, var(--bg-void) 0%, var(--bg-deep) 50%, var(--bg-slate) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -93,14 +96,15 @@
       max-height: min(72vh, 640px);
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 18px 36px rgba(90, 22, 0, 0.34));
+      filter: drop-shadow(0 18px 42px rgba(34, 211, 238, 0.30));
       animation: pulseLogo 1.7s ease-in-out infinite;
     }
 
     .splash-loader {
-      width: 176px;
+      width: 190px;
       height: 5px;
-      background: rgba(255, 255, 255, 0.24);
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -110,7 +114,8 @@
       display: block;
       width: 45%;
       height: 100%;
-      background: #FFFFFF;
+      background: linear-gradient(90deg, var(--cyan-neon), var(--blue-electric));
+      box-shadow: 0 0 14px var(--cyan-neon);
       border-radius: 999px;
       animation: loadingBar 1.2s ease-in-out infinite;
     }
@@ -155,23 +160,25 @@
       object-fit: contain;
       margin-top: -6px;
       margin-bottom: -36px;
-      filter: drop-shadow(0 14px 28px rgba(85, 20, 0, 0.30));
+      filter: drop-shadow(0 16px 36px rgba(34, 211, 238, 0.25));
     }
 
     .title-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 4px;
     }
 
     .system-title {
       font-size: clamp(1.35rem, 3vw, 1.9rem);
       font-weight: 800;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      color: #FFFFFF;
-      text-shadow: 0 3px 14px rgba(105, 24, 0, 0.32);
+      background: linear-gradient(135deg, #FFFFFF 25%, #67E8F9 70%, #A5B4FC 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 18px rgba(34, 211, 238, 0.24));
     }
 
     .system-subtitle {
@@ -186,16 +193,16 @@
       justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 8px;
+      margin-top: 10px;
       background: var(--glass-elevated);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
       border: 1px solid var(--border-strong);
       padding: 6px 10px 6px 18px;
       border-radius: 999px;
       font-size: 0.86rem;
       font-weight: 700;
-      box-shadow: 0 10px 26px rgba(90, 20, 0, 0.24);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(34, 211, 238, 0.14);
     }
 
     .unit-dot {
@@ -203,38 +210,42 @@
       height: 8px;
       border-radius: 50%;
       background: #34D399;
-      box-shadow: 0 0 10px #34D399;
+      box-shadow: 0 0 12px #34D399;
     }
 
     .btn-change-unit {
-      background: #FFFFFF;
-      color: var(--orange-ink);
-      border: none;
+      background: rgba(34, 211, 238, 0.16);
+      color: #67E8F9;
+      border: 1px solid rgba(34, 211, 238, 0.48);
       border-radius: 999px;
       padding: 6px 14px;
       font-size: 0.75rem;
       font-weight: 800;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      letter-spacing: 0.5px;
+      transition: all 0.18s ease;
     }
 
     .btn-change-unit:hover {
+      background: var(--cyan-neon);
+      color: #030712;
       transform: scale(1.04);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
     }
 
-    /* PAINÉIS GLASSMORPHISM SOBRE LARANJA */
+    /* PAINÉIS GLASSMORPHISM FUTURISTAS */
     .panel {
       width: 100%;
       background: var(--glass-surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(22px) saturate(165%);
+      -webkit-backdrop-filter: blur(22px) saturate(165%);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 24px 20px;
-      box-shadow: 0 20px 45px rgba(92, 22, 0, 0.28);
+      box-shadow:
+        0 24px 54px rgba(0, 0, 0, 0.52),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
     }
 
     .panel-header {
@@ -245,45 +256,141 @@
       flex-wrap: wrap;
       margin-bottom: 18px;
       padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.18);
     }
 
     .panel-title {
       font-size: 1.06rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #FFFFFF;
+      color: #F8FAFC;
     }
 
     .panel-title-icon {
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid var(--border-subtle);
-      color: #FFFFFF;
+      background: rgba(34, 211, 238, 0.14);
+      border: 1px solid rgba(34, 211, 238, 0.38);
+      color: var(--cyan-neon);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.18);
+    }
+
+    .header-pills-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .tolerance-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid var(--border-strong);
-      color: #FFFFFF;
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.42);
+      color: #67E8F9;
       padding: 6px 13px;
       border-radius: 999px;
       font-size: 0.76rem;
       font-weight: 800;
       letter-spacing: 0.3px;
+    }
+
+    .ranking-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      color: #FDE047;
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.18s ease;
+    }
+
+    .ranking-toggle-pill.inactive {
+      background: rgba(15, 23, 42, 0.55);
+      border-color: rgba(148, 163, 184, 0.28);
+      color: rgba(148, 163, 184, 0.78);
+    }
+
+    .ranking-toggle-pill input {
+      accent-color: #FBBF24;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* SELOS DE RANKING TOP 10 */
+    .top10-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(245, 158, 11, 0.20);
+      color: #FDE047;
+      border: 1px solid rgba(251, 191, 36, 0.65);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.70rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.18);
+    }
+
+    .fila-geral-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(148, 163, 184, 0.12);
+      color: #94A3B8;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .rank-move-btns {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .btn-rank-step {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.48);
+      color: #FDE047;
+      border-radius: 6px;
+      padding: 3px 7px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+      line-height: 1;
+      transition: background 0.15s ease;
+    }
+
+    .btn-rank-step:hover:not(:disabled) {
+      background: rgba(245, 158, 11, 0.36);
+    }
+
+    .btn-rank-step:disabled {
+      opacity: 0.30;
+      cursor: not-allowed;
     }
 
     /* GRADE DE UNIDADES */
@@ -307,10 +414,10 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 24px 14px;
-      color: #FFFFFF;
+      color: #F8FAFC;
       font-size: 1rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -319,34 +426,36 @@
       gap: 12px;
       transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
       overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 
     .unit-card:hover, .unit-card:active {
-      background: #FFFFFF;
-      color: var(--orange-ink);
-      border-color: #FFFFFF;
+      background: linear-gradient(145deg, rgba(34, 211, 238, 0.20) 0%, rgba(59, 130, 246, 0.18) 100%);
+      color: #FFFFFF;
+      border-color: var(--cyan-neon);
       transform: translateY(-3px);
-      box-shadow: 0 14px 30px rgba(85, 20, 0, 0.30);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 24px rgba(34, 211, 238, 0.26);
     }
 
     .unit-card-icon {
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid var(--border-subtle);
-      color: #FFFFFF;
+      background: rgba(34, 211, 238, 0.10);
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      color: var(--cyan-neon);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+      transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
     }
 
     .unit-card:hover .unit-card-icon {
-      background: rgba(255, 94, 0, 0.14);
-      border-color: rgba(255, 94, 0, 0.3);
-      color: var(--orange-main);
-      transform: scale(1.06);
+      background: var(--cyan-neon);
+      border-color: var(--cyan-neon);
+      color: #030712;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.55);
     }
 
     /* NAVEGAÇÃO PRINCIPAL DA UNIDADE */
@@ -371,9 +480,9 @@
     }
 
     .btn-hero-roteirizar {
-      background: #FFFFFF;
-      color: var(--orange-ink);
-      border: 1.5px solid #FFFFFF;
+      background: linear-gradient(135deg, #22D3EE 0%, #0EA5E9 52%, #3B82F6 100%);
+      color: #030712;
+      border: 1px solid rgba(165, 243, 252, 0.75);
       border-radius: var(--radius-lg);
       padding: 18px 20px;
       font-size: 1.08rem;
@@ -385,18 +494,20 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 12px 28px rgba(88, 20, 0, 0.28);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 12px 30px rgba(6, 182, 212, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
     }
 
     .btn-hero-roteirizar:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 34px rgba(88, 20, 0, 0.36);
+      filter: brightness(1.06);
+      box-shadow: 0 16px 38px rgba(34, 211, 238, 0.46);
     }
 
     .btn-secondary-nav {
       background: var(--glass-elevated);
-      color: #FFFFFF;
+      backdrop-filter: blur(14px);
+      color: #E2E8F0;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 16px 14px;
@@ -414,23 +525,25 @@
 
     .btn-secondary-nav:hover {
       border-color: var(--border-strong);
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(34, 211, 238, 0.12);
+      color: #FFFFFF;
     }
 
     .btn-secondary-nav.active {
-      background: rgba(255, 255, 255, 0.24);
-      border-color: #FFFFFF;
-      color: #FFFFFF;
-      box-shadow: 0 8px 20px rgba(88, 20, 0, 0.22);
+      background: rgba(34, 211, 238, 0.18);
+      border-color: var(--cyan-neon);
+      color: #67E8F9;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(34, 211, 238, 0.22);
     }
 
     /* STEPPER / PASSOS DA ROTEIRIZAÇÃO */
     .step-card {
       background: var(--glass-elevated);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(56, 189, 248, 0.18);
       border-radius: var(--radius-lg);
       padding: 18px;
       margin-bottom: 18px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     .step-header {
@@ -449,21 +562,23 @@
       font-size: 0.95rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
+      color: #F8FAFC;
     }
 
     .step-number {
       width: 26px;
       height: 26px;
       border-radius: 8px;
-      background: #FFFFFF;
-      color: var(--orange-ink);
+      background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-electric) 100%);
+      color: #030712;
       font-size: 0.82rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
     }
 
     .step-badges-right {
@@ -476,17 +591,17 @@
     .availability-summary {
       font-size: 0.78rem;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--border-subtle);
-      color: #FFFFFF;
+      color: #CBD5E1;
       padding: 5px 12px;
       border-radius: 999px;
     }
 
     .btn-reset-drivers {
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid var(--border-strong);
-      color: #FFFFFF;
+      background: rgba(34, 211, 238, 0.14);
+      border: 1px solid rgba(34, 211, 238, 0.45);
+      color: #67E8F9;
       border-radius: 999px;
       padding: 5px 11px;
       font-size: 0.72rem;
@@ -496,11 +611,12 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
     }
 
     .btn-reset-drivers:hover {
-      background: rgba(255, 255, 255, 0.28);
+      background: rgba(34, 211, 238, 0.26);
+      color: #FFFFFF;
     }
 
     .mini-filter-wrap {
@@ -514,19 +630,20 @@
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
-      color: #FFFFFF;
+      color: #F8FAFC;
       font-size: 0.88rem;
       font-weight: 600;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .mini-filter-wrap input::placeholder {
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(148, 163, 184, 0.75);
     }
 
     .mini-filter-wrap input:focus {
-      border-color: #FFFFFF;
+      border-color: var(--cyan-neon);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
     }
 
     .mini-filter-wrap svg {
@@ -534,7 +651,7 @@
       left: 12px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--cyan-bright);
     }
 
     .availability-grid {
@@ -551,7 +668,7 @@
     }
 
     .availability-grid::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.26);
+      background: rgba(56, 189, 248, 0.30);
       border-radius: 999px;
     }
 
@@ -568,21 +685,26 @@
       gap: 10px;
       padding: 11px 13px;
       border-radius: var(--radius-md);
-      border: 1px solid var(--border-subtle);
-      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.20);
+      background: rgba(15, 23, 42, 0.56);
       cursor: pointer;
       transition: all 0.16s ease;
       user-select: none;
     }
 
+    .driver-toggle.is-top10 {
+      border-color: rgba(251, 191, 36, 0.48);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(15, 23, 42, 0.65) 100%);
+    }
+
     .driver-toggle:hover {
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(34, 211, 238, 0.12);
       border-color: var(--border-strong);
     }
 
     .driver-toggle.unavailable {
-      background: rgba(153, 27, 27, 0.56);
-      border-color: #FCA5A5;
+      background: rgba(159, 18, 57, 0.38);
+      border-color: rgba(251, 113, 133, 0.65);
     }
 
     .driver-toggle-text {
@@ -592,15 +714,22 @@
       min-width: 0;
     }
 
+    .driver-name-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
     .driver-toggle-text b {
       font-size: 0.88rem;
-      color: #FFFFFF;
+      color: #F8FAFC;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .driver-toggle-text span {
+    .driver-toggle-text span.sub-info {
       font-size: 0.76rem;
       color: var(--text-soft);
       font-weight: 600;
@@ -617,25 +746,25 @@
     }
 
     .status-pill.ok {
-      background: rgba(16, 185, 129, 0.25);
-      color: #A7F3D0;
-      border: 1px solid rgba(52, 211, 153, 0.55);
+      background: rgba(16, 185, 129, 0.18);
+      color: #6EE7B7;
+      border: 1px solid rgba(52, 211, 153, 0.48);
     }
 
     .status-pill.off {
-      background: #DC2626;
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(244, 63, 94, 0.28);
+      color: #FDA4AF;
+      border: 1px solid rgba(251, 113, 133, 0.65);
     }
 
     /* ÁREA DE UPLOAD DRAG & DROP */
     .upload-zone {
       position: relative;
-      border: 2px dashed rgba(255, 255, 255, 0.58);
+      border: 2px dashed rgba(56, 189, 248, 0.46);
       border-radius: var(--radius-lg);
       padding: 32px 20px;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(14, 5, 1, 0.32) 100%);
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.06) 0%, rgba(3, 7, 18, 0.52) 100%);
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -645,8 +774,9 @@
     }
 
     .upload-zone:hover, .upload-zone.dragover {
-      border-color: #FFFFFF;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 5, 1, 0.38) 100%);
+      border-color: var(--cyan-neon);
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.14) 0%, rgba(3, 7, 18, 0.60) 100%);
+      box-shadow: 0 0 28px rgba(34, 211, 238, 0.18);
       transform: translateY(-1px);
     }
 
@@ -654,21 +784,21 @@
       width: 56px;
       height: 56px;
       border-radius: 16px;
-      background: #FFFFFF;
-      color: var(--orange-ink);
+      background: linear-gradient(135deg, var(--cyan-neon) 0%, var(--blue-electric) 100%);
+      color: #030712;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 20px rgba(85, 20, 0, 0.24);
+      box-shadow: 0 8px 24px rgba(34, 211, 238, 0.35);
     }
 
     .loaded-file-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(16, 185, 129, 0.24);
-      border: 1px solid rgba(52, 211, 153, 0.6);
-      color: #ECFDF5;
+      background: rgba(16, 185, 129, 0.20);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      color: #A7F3D0;
       padding: 5px 12px;
       border-radius: 999px;
       font-size: 0.78rem;
@@ -687,34 +817,35 @@
       margin-top: 18px;
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: 768px) {
       .kpi-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
       }
     }
 
     .kpi-card {
       background: var(--glass-elevated);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(56, 189, 248, 0.20);
       border-radius: var(--radius-md);
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 4px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     .kpi-label {
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      color: var(--text-soft);
-      letter-spacing: 0.4px;
+      color: #94A3B8;
+      letter-spacing: 0.5px;
     }
 
     .kpi-value {
       font-size: 1.35rem;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #F8FAFC;
     }
 
     .alert-box {
@@ -724,24 +855,25 @@
       font-size: 0.9rem;
       font-weight: 600;
       line-height: 1.5;
+      backdrop-filter: blur(12px);
     }
 
     .alert-warning {
-      background: rgba(146, 64, 14, 0.65);
-      border: 1px solid #FCD34D;
+      background: rgba(146, 64, 14, 0.36);
+      border: 1px solid rgba(251, 191, 36, 0.65);
       color: #FEF3C7;
     }
 
     .alert-success {
-      background: rgba(6, 95, 70, 0.68);
-      border: 1px solid #6EE7B7;
+      background: rgba(6, 78, 59, 0.42);
+      border: 1px solid rgba(52, 211, 153, 0.55);
       color: #ECFDF5;
     }
 
     .alert-danger {
-      background: rgba(153, 27, 27, 0.68);
-      border: 1px solid #FCA5A5;
-      color: #FEF2F2;
+      background: rgba(136, 19, 55, 0.45);
+      border: 1px solid rgba(251, 113, 133, 0.65);
+      color: #FFE4E6;
     }
 
     .manual-edit-hint {
@@ -774,53 +906,53 @@
 
     th, td {
       padding: 11px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.12);
       white-space: nowrap;
     }
 
     th {
-      background: rgba(0, 0, 0, 0.28);
+      background: rgba(3, 7, 18, 0.65);
       font-weight: 800;
       text-transform: uppercase;
       font-size: 0.74rem;
-      letter-spacing: 0.5px;
-      color: var(--text-soft);
+      letter-spacing: 0.6px;
+      color: #67E8F9;
     }
 
     tbody tr:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(34, 211, 238, 0.06);
     }
 
     /* SELETOR DE AJUSTE MANUAL NA PRÉVIA */
     .manual-driver-select {
-      min-width: 245px;
-      max-width: 310px;
+      min-width: 265px;
+      max-width: 330px;
       padding: 8px 11px;
       border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: rgba(14, 5, 1, 0.65);
-      color: #FFFFFF;
+      border: 1px solid rgba(56, 189, 248, 0.40);
+      background: rgba(3, 7, 18, 0.82);
+      color: #F8FAFC;
       font-size: 0.82rem;
       font-weight: 700;
       outline: none;
       cursor: pointer;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .manual-driver-select:focus,
     .manual-driver-select:hover {
-      border-color: #FFFFFF;
-      background: rgba(14, 5, 1, 0.85);
+      border-color: var(--cyan-neon);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.22);
     }
 
     .manual-driver-select.unassigned {
-      border-color: #FCA5A5;
-      background: rgba(153, 27, 27, 0.55);
+      border-color: rgba(251, 113, 133, 0.72);
+      background: rgba(136, 19, 55, 0.35);
     }
 
     .manual-driver-select option {
-      background: #7A1D00;
-      color: #FFFFFF;
+      background: #0F172A;
+      color: #F8FAFC;
       font-weight: 700;
     }
 
@@ -828,9 +960,9 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(16, 185, 129, 0.26);
-      color: #A7F3D0;
-      border: 1px solid rgba(52, 211, 153, 0.55);
+      background: rgba(16, 185, 129, 0.20);
+      color: #6EE7B7;
+      border: 1px solid rgba(52, 211, 153, 0.48);
       padding: 4px 10px;
       border-radius: 999px;
       font-weight: 800;
@@ -841,9 +973,9 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(245, 158, 11, 0.30);
-      color: #FDE68A;
-      border: 1px solid rgba(251, 191, 36, 0.65);
+      background: rgba(245, 158, 11, 0.22);
+      color: #FDE047;
+      border: 1px solid rgba(251, 191, 36, 0.55);
       padding: 4px 10px;
       border-radius: 999px;
       font-weight: 800;
@@ -854,9 +986,9 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(220, 38, 38, 0.36);
-      color: #FECACA;
-      border: 1px solid rgba(248, 113, 113, 0.55);
+      background: rgba(244, 63, 94, 0.24);
+      color: #FDA4AF;
+      border: 1px solid rgba(251, 113, 133, 0.55);
       padding: 4px 10px;
       border-radius: 999px;
       font-weight: 800;
@@ -882,12 +1014,16 @@
       gap: 7px;
     }
 
+    .form-group.full-span {
+      grid-column: 1 / -1;
+    }
+
     .form-group label {
       font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-soft);
+      letter-spacing: 0.5px;
+      color: #94A3B8;
     }
 
     .form-group input, .form-group select {
@@ -896,7 +1032,7 @@
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
-      color: #FFFFFF;
+      color: #F8FAFC;
       font-size: 0.98rem;
       font-weight: 700;
       outline: none;
@@ -904,18 +1040,18 @@
     }
 
     .form-group input::placeholder {
-      color: rgba(255, 255, 255, 0.55);
+      color: rgba(148, 163, 184, 0.55);
       font-weight: 500;
     }
 
     .form-group select option {
-      background: #8F2200;
-      color: #FFFFFF;
+      background: #0F172A;
+      color: #F8FAFC;
     }
 
     .form-group input:focus, .form-group select:focus {
-      border-color: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+      border-color: var(--cyan-neon);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18);
     }
 
     .btn-row {
@@ -935,13 +1071,13 @@
       font-size: 0.92rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, filter 0.15s ease;
     }
 
     .btn-action:active {
@@ -949,30 +1085,39 @@
     }
 
     .btn-save {
-      background: #FFFFFF;
-      color: var(--orange-ink);
-      box-shadow: 0 10px 24px rgba(85, 20, 0, 0.25);
+      background: linear-gradient(135deg, #22D3EE 0%, #0EA5E9 55%, #3B82F6 100%);
+      color: #030712;
+      border-color: rgba(165, 243, 252, 0.7);
+      box-shadow: 0 10px 26px rgba(6, 182, 212, 0.30);
     }
 
     .btn-save:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(85, 20, 0, 0.32);
+      filter: brightness(1.06);
+      box-shadow: 0 14px 32px rgba(34, 211, 238, 0.42);
     }
 
     .btn-delete {
-      background: rgba(185, 28, 28, 0.72);
+      background: rgba(225, 29, 72, 0.26);
+      color: #FDA4AF;
+      border-color: rgba(251, 113, 133, 0.55);
+    }
+
+    .btn-delete:hover {
+      background: rgba(225, 29, 72, 0.42);
       color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.35);
     }
 
     .btn-cancel {
-      background: rgba(255, 255, 255, 0.16);
-      color: #FFFFFF;
-      border-color: var(--border-strong);
+      background: rgba(30, 41, 59, 0.65);
+      color: #E2E8F0;
+      border-color: rgba(148, 163, 184, 0.35);
     }
 
     .btn-cancel:hover {
-      background: rgba(255, 255, 255, 0.26);
+      background: rgba(51, 65, 85, 0.80);
+      border-color: var(--cyan-neon);
+      color: #FFFFFF;
       transform: translateY(-1px);
     }
 
@@ -989,19 +1134,20 @@
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--glass-input);
-      color: #FFFFFF;
+      color: #F8FAFC;
       font-size: 0.96rem;
       font-weight: 600;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .search-box input:focus {
-      border-color: #FFFFFF;
+      border-color: var(--cyan-neon);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
     }
 
     .search-box input::placeholder {
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(148, 163, 184, 0.65);
     }
 
     .search-box svg {
@@ -1009,7 +1155,7 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--cyan-bright);
     }
 
     .vehicle-list {
@@ -1020,7 +1166,7 @@
 
     .vehicle-item {
       background: var(--glass-elevated);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: var(--radius-md);
       padding: 14px 16px;
       display: flex;
@@ -1031,9 +1177,14 @@
       transition: border-color 0.16s ease, background 0.16s ease;
     }
 
+    .vehicle-item.is-top10 {
+      border-color: rgba(251, 191, 36, 0.48);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(7, 12, 26, 0.72) 100%);
+    }
+
     .vehicle-item:hover {
       border-color: var(--border-strong);
-      background: rgba(18, 7, 1, 0.54);
+      background: rgba(15, 23, 42, 0.82);
     }
 
     .vehicle-info {
@@ -1050,21 +1201,23 @@
     }
 
     .plate-badge {
-      background: #FFFFFF;
-      color: var(--orange-ink);
+      background: rgba(34, 211, 238, 0.16);
+      color: #67E8F9;
+      border: 1px solid rgba(34, 211, 238, 0.45);
       padding: 2px 9px;
       border-radius: 6px;
       font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
     }
 
     .vehicle-info strong {
       font-size: 0.98rem;
       letter-spacing: 0.3px;
+      color: #F8FAFC;
     }
 
-    .vehicle-info span {
+    .vehicle-info span.vehicle-sub {
       font-size: 0.82rem;
       color: var(--text-soft);
       font-weight: 600;
@@ -1072,7 +1225,9 @@
 
     .vehicle-item-btns {
       display: flex;
+      align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .btn-mini {
@@ -1086,22 +1241,23 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      transition: transform 0.15s ease, filter 0.15s ease;
+      transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
     }
 
     .btn-mini:hover {
-      filter: brightness(1.06);
+      filter: brightness(1.08);
     }
 
     .btn-mini-edit {
-      background: #FFFFFF;
-      color: var(--orange-ink);
+      background: rgba(34, 211, 238, 0.18);
+      border-color: rgba(34, 211, 238, 0.48);
+      color: #67E8F9;
     }
 
     .btn-mini-del {
-      background: rgba(185, 28, 28, 0.76);
-      border-color: rgba(255, 255, 255, 0.32);
-      color: #FFFFFF;
+      background: rgba(225, 29, 72, 0.24);
+      border-color: rgba(251, 113, 133, 0.50);
+      color: #FDA4AF;
     }
 
     /* RODAPÉ */
@@ -1111,21 +1267,22 @@
       padding: 14px 16px 28px;
       font-size: 0.86rem;
       font-weight: 600;
-      color: var(--text-soft);
+      color: #94A3B8;
       margin-top: auto;
     }
 
     footer.signature-footer a {
-      color: #FFFFFF;
+      color: #67E8F9;
       font-weight: 800;
       text-decoration: none;
-      border-bottom: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-bottom: 1.5px solid rgba(34, 211, 238, 0.55);
       padding-bottom: 1px;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.15s ease, color 0.15s ease;
     }
 
     footer.signature-footer a:hover {
-      opacity: 0.82;
+      color: #FFFFFF;
+      opacity: 0.9;
     }
 
     .hidden {
@@ -1138,16 +1295,16 @@
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(12px);
-      background: rgba(22, 8, 2, 0.94);
-      backdrop-filter: blur(12px);
-      color: #FFFFFF;
-      border: 1px solid var(--border-strong);
+      background: rgba(7, 12, 26, 0.92);
+      backdrop-filter: blur(16px);
+      color: #F8FAFC;
+      border: 1px solid var(--cyan-neon);
       padding: 12px 22px;
       border-radius: 999px;
       font-weight: 700;
       font-size: 0.88rem;
       z-index: 10000;
-      box-shadow: 0 14px 32px rgba(70, 16, 0, 0.45);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65), 0 0 22px rgba(34, 211, 238, 0.25);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.25s ease, transform 0.25s ease;
@@ -1178,7 +1335,7 @@
       <img src="logo.png" alt="Roteirizador Rodalog" class="main-logo" />
       <div class="title-group">
         <h1 class="system-title">Roteirizador Rodalog</h1>
-        <p class="system-subtitle">Alocação inteligente de frota por DT e capacidade</p>
+        <p class="system-subtitle">Alocação inteligente de frota por DT, Ranking Top 10 e capacidade</p>
       </div>
 
       <div id="active-unit-bar" class="unit-badge-bar hidden">
@@ -1254,10 +1411,17 @@
             <span class="panel-title-icon"><i data-lucide="file-spreadsheet" size="18"></i></span>
             <span>Roteirização Automática por DT</span>
           </div>
-          <span class="tolerance-pill">
-            <i data-lucide="shield-check" size="15"></i>
-            <span>Tolerância +5% ativa</span>
-          </span>
+          <div class="header-pills-group">
+            <label id="pill-toggle-top10" class="ranking-toggle-pill" title="Priorizar motoristas do Top 10 na escala">
+              <input type="checkbox" id="toggle-top10-ativo" checked onchange="alternarRegraTop10()" />
+              <i data-lucide="trophy" size="14"></i>
+              <span>Prioridade Top 10 ativa</span>
+            </label>
+            <span class="tolerance-pill">
+              <i data-lucide="shield-check" size="15"></i>
+              <span>Tolerância +5% ativa</span>
+            </span>
+          </div>
         </div>
 
         <!-- PASSO 1: INDISPONIBILIDADE DE MOTORISTAS -->
@@ -1276,12 +1440,12 @@
           </div>
 
           <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px;">
-            Toque nos motoristas que <b>não vão rodar hoje</b> para deixá-los fora da roteirização:
+            Motoristas do <b>Top 10</b> aparecem primeiro e são escalados com prioridade. Toque nos motoristas que <b>não vão rodar hoje</b>:
           </p>
 
           <div class="mini-filter-wrap">
             <i data-lucide="search" size="16"></i>
-            <input type="text" id="filtro-indisponibilidade" placeholder="Filtrar motorista ou placa..." oninput="renderizarSeletorIndisponibilidade()" />
+            <input type="text" id="filtro-indisponibilidade" placeholder="Filtrar motorista, placa ou TOP..." oninput="renderizarSeletorIndisponibilidade()" />
           </div>
 
           <div id="lista-indisponibilidade" class="availability-grid"></div>
@@ -1300,10 +1464,10 @@
             <div class="upload-icon-circle">
               <i data-lucide="upload-cloud" size="28"></i>
             </div>
-            <strong id="upload-title-text" style="font-size: 1.02rem; color: #FFFFFF;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
+            <strong id="upload-title-text" style="font-size: 1.02rem; color: #F8FAFC;">Toque ou arraste o arquivo Excel (.xlsx / .xls)</strong>
             <span id="loaded-file-badge" class="loaded-file-pill hidden"></span>
-            <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 580px;">
-              Prioriza capacidade exata e aceita até <b>+5% de tolerância</b> • Permite <b>ajuste manual</b> na prévia antes de baixar
+            <span style="font-size: 0.84rem; color: var(--text-soft); max-width: 600px;">
+              Roteiriza primeiro o <b>Top 10</b>, aceita até <b>+5% de tolerância</b> • Permite <b>ajuste manual</b> na prévia antes de baixar
             </span>
             <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" onchange="processarArquivoExcel(event)" />
           </label>
@@ -1388,6 +1552,23 @@
             <label for="veiculo-capacidade">Qtd. Média de Caixas que Cabe</label>
             <input type="number" id="veiculo-capacidade" class="mono" min="1" placeholder="EX: 350" />
           </div>
+
+          <div class="form-group full-span">
+            <label for="veiculo-ranking">Posição no Ranking Top 10 (Prioridade na Roteirização)</label>
+            <select id="veiculo-ranking">
+              <option value="">FILA GERAL (SEM RANKING TOP 10)</option>
+              <option value="1">TOP #1 — PRIORIDADE MÁXIMA</option>
+              <option value="2">TOP #2</option>
+              <option value="3">TOP #3</option>
+              <option value="4">TOP #4</option>
+              <option value="5">TOP #5</option>
+              <option value="6">TOP #6</option>
+              <option value="7">TOP #7</option>
+              <option value="8">TOP #8</option>
+              <option value="9">TOP #9</option>
+              <option value="10">TOP #10</option>
+            </select>
+          </div>
         </div>
 
         <div class="btn-row">
@@ -1411,13 +1592,13 @@
         <div class="panel-header">
           <div class="panel-title">
             <span class="panel-title-icon"><i data-lucide="search" size="18"></i></span>
-            <span>Frota Cadastrada da Unidade</span>
+            <span>Frota Cadastrada &amp; Ranking Top 10</span>
           </div>
         </div>
 
         <div class="search-box">
           <i data-lucide="search" size="18"></i>
-          <input type="text" id="campo-busca" placeholder="Pesquisar por motorista, placa ou tipo..." oninput="filtrarVeiculos()" />
+          <input type="text" id="campo-busca" placeholder="Pesquisar por motorista, placa, tipo ou TOP..." oninput="filtrarVeiculos()" />
         </div>
 
         <div id="lista-veiculos" class="vehicle-list"></div>
@@ -1514,6 +1695,164 @@
       return Math.round(Number(capacidadeBase || 0) * TOLERANCIA_CAPACIDADE * 100) / 100;
     }
 
+    // =========================================================================
+    // HELPERS DO RANKING TOP 10 (1 a 10 = TOP 10 | vazio/null = Fila Geral)
+    // =========================================================================
+    function normalizarRanking(valor) {
+      if (valor === null || valor === undefined || valor === "") return null;
+      const num = parseInt(String(valor).trim(), 10);
+      if (Number.isInteger(num) && num >= 1 && num <= 10) return num;
+      return null;
+    }
+
+    function ehTop10(veiculo) {
+      return normalizarRanking(veiculo && veiculo.ranking) !== null;
+    }
+
+    function obterEtiquetaRanking(veiculo) {
+      const r = normalizarRanking(veiculo && veiculo.ranking);
+      return r !== null ? `TOP #${r}` : "Fila Geral";
+    }
+
+    function obterChaveCacheRanking(unidade) {
+      return `rodalog_top10_map_${unidade}`;
+    }
+
+    function carregarMapaRankingLocal(unidade) {
+      try {
+        const raw = localStorage.getItem(obterChaveCacheRanking(unidade));
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function salvarMapaRankingLocal(unidade, listaVeiculos) {
+      try {
+        const mapa = {};
+        (listaVeiculos || []).forEach(v => {
+          const r = normalizarRanking(v.ranking);
+          if (r !== null) {
+            if (v.id !== undefined && v.id !== null && String(v.id) !== "") {
+              mapa[`id:${String(v.id)}`] = r;
+            }
+            const p = normalizarPlaca(v.placa);
+            if (p) {
+              mapa[`placa:${p}`] = r;
+            }
+          }
+        });
+        localStorage.setItem(obterChaveCacheRanking(unidade), JSON.stringify(mapa));
+      } catch (e) {
+        // Ignora erro de quota
+      }
+    }
+
+    function aplicarRankingsSalvos(unidade, listaVeiculos) {
+      const mapaLocal = carregarMapaRankingLocal(unidade);
+      const posicoesOcupadas = new Set();
+
+      return (listaVeiculos || []).map(v => {
+        let rank = normalizarRanking(v.ranking);
+        if (rank === null) {
+          const porId = mapaLocal[`id:${String(v.id)}`];
+          const porPlaca = mapaLocal[`placa:${normalizarPlaca(v.placa)}`];
+          rank = normalizarRanking(porId !== undefined ? porId : porPlaca);
+        }
+        if (rank !== null) {
+          if (posicoesOcupadas.has(rank)) {
+            rank = null;
+          } else {
+            posicoesOcupadas.add(rank);
+          }
+        }
+        return { ...v, ranking: rank };
+      });
+    }
+
+    function ordenarFrotaComTop10(lista, priorizarTop10 = true) {
+      const copia = [...(lista || [])];
+      if (!priorizarTop10) {
+        return copia.sort((a, b) => String(a.motorista || "").localeCompare(String(b.motorista || "")));
+      }
+
+      const top10 = copia
+        .filter(ehTop10)
+        .sort((a, b) => normalizarRanking(a.ranking) - normalizarRanking(b.ranking));
+
+      const filaGeral = copia
+        .filter(v => !ehTop10(v))
+        .sort((a, b) => String(a.motorista || "").localeCompare(String(b.motorista || "")));
+
+      return [...top10, ...filaGeral];
+    }
+
+    function priorizarTop10Ativo() {
+      const el = document.getElementById("toggle-top10-ativo");
+      return el ? el.checked : true;
+    }
+
+    function alternarRegraTop10() {
+      const ativo = priorizarTop10Ativo();
+      const pill = document.getElementById("pill-toggle-top10");
+      if (pill) {
+        pill.classList.toggle("inactive", !ativo);
+      }
+      renderizarSeletorIndisponibilidade();
+      mostrarToast(ativo ? "Prioridade Top 10 ativada!" : "Prioridade Top 10 desativada.");
+
+      if (ultimoArquivoExcel) {
+        executarRoteirizacaoNoBuffer(ultimoArquivoExcel.buffer, ultimoArquivoExcel.fileName, false);
+      }
+    }
+
+    async function moverPosicaoTop10(id, direcao) {
+      const idx = frotaUnidade.findIndex(v => String(v.id) === String(id));
+      if (idx === -1) return;
+
+      const atual = frotaUnidade[idx];
+      const rankAtual = normalizarRanking(atual.ranking);
+      if (rankAtual === null) return;
+
+      const novoRank = rankAtual + direcao;
+      if (novoRank < 1 || novoRank > 10) return;
+
+      const outro = frotaUnidade.find(v => String(v.id) !== String(id) && normalizarRanking(v.ranking) === novoRank);
+      if (outro) {
+        outro.ranking = rankAtual;
+      }
+      atual.ranking = novoRank;
+
+      salvarMapaRankingLocal(unidadeAtual, frotaUnidade);
+      localStorage.setItem(`rodalog_${unidadeAtual}`, JSON.stringify(frotaUnidade));
+      filtrarVeiculos();
+      renderizarSeletorIndisponibilidade();
+      mostrarToast(`${atual.motorista} agora é TOP #${novoRank}!`);
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "salvar_veiculo",
+            unidade: unidadeAtual,
+            veiculo: atual
+          })
+        });
+        if (outro) {
+          await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "salvar_veiculo",
+              unidade: unidadeAtual,
+              veiculo: outro
+            })
+          });
+        }
+      } catch (e) {
+        // Mantido no cache local mesmo offline
+      }
+    }
+
     function extrairValorCelulaExcelJs(cellValue) {
       if (cellValue === null || cellValue === undefined) return "";
       if (typeof cellValue === "object") {
@@ -1531,19 +1870,16 @@
       return String(cellValue).trim();
     }
 
-    // Valida se o código é realmente uma DT numérica (ex: 14329313), ignorando "R1", "AS1", "TOTAL ..." etc.
     function ehCodigoDTValido(valor) {
       const limpo = String(valor || "").trim();
       return /^\d{6,10}$/.test(limpo);
     }
 
-    // Identifica linhas de resumo da rota no formato R1, R2, AS1, AS2 etc.
     function ehResumoRota(valor) {
       const norm = normalizarTexto(valor);
       return /^(R|AS)\d+$/i.test(norm);
     }
 
-    // Identifica linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", "TOTAL GERAL") para ignorar
     function ehLinhaTotal(dtRaw, row) {
       const dtNorm = normalizarTexto(dtRaw);
       if (/^TOTAL(\b|\s|:|-|\d)/i.test(dtNorm)) return true;
@@ -1653,7 +1989,7 @@
         if (resetForm) limparFormularioVeiculo();
       } else if (aba === "buscar") {
         document.getElementById("nav-buscar").classList.add("active");
-        renderizarListaVeiculos(frotaUnidade);
+        filtrarVeiculos();
       } else if (aba === "roteirizar") {
         renderizarSeletorIndisponibilidade();
       }
@@ -1667,11 +2003,12 @@
         const resp = await fetch(`${SCRIPT_URL}?action=listar&unidade=${encodeURIComponent(unidadeAtual)}`);
         const json = await resp.json();
         if (json.status === "success") {
-          frotaUnidade = json.veiculos || [];
+          frotaUnidade = aplicarRankingsSalvos(unidadeAtual, json.veiculos || []);
+          salvarMapaRankingLocal(unidadeAtual, frotaUnidade);
           const idsValidos = new Set(frotaUnidade.map(v => String(v.id)));
           indisponiveisIds = new Set([...indisponiveisIds].filter(id => idsValidos.has(id)));
           localStorage.setItem(`rodalog_${unidadeAtual}`, JSON.stringify(frotaUnidade));
-          renderizarListaVeiculos(frotaUnidade);
+          filtrarVeiculos();
           renderizarSeletorIndisponibilidade();
           mostrarToast(`Frota de ${unidadeAtual} sincronizada (${frotaUnidade.length} veículos).`);
         } else {
@@ -1679,14 +2016,14 @@
         }
       } catch (e) {
         const local = localStorage.getItem(`rodalog_${unidadeAtual}`);
-        frotaUnidade = local ? JSON.parse(local) : [];
-        renderizarListaVeiculos(frotaUnidade);
+        frotaUnidade = aplicarRankingsSalvos(unidadeAtual, local ? JSON.parse(local) : []);
+        filtrarVeiculos();
         renderizarSeletorIndisponibilidade();
         mostrarToast("Sem conexão com Drive; usando cache local.");
       }
     }
 
-    // SELETOR DE INDISPONIBILIDADE DE MOTORISTAS
+    // SELETOR DE INDISPONIBILIDADE DE MOTORISTAS (COM TOP 10 NO TOPO)
     function renderizarSeletorIndisponibilidade() {
       const container = document.getElementById("lista-indisponibilidade");
       const counter = document.getElementById("availability-counter");
@@ -1695,7 +2032,8 @@
 
       const totalIndisp = indisponiveisIds.size;
       const totalDisp = Math.max(0, frotaUnidade.length - totalIndisp);
-      counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disponível(is)`;
+      const totalTop10Disp = frotaUnidade.filter(v => ehTop10(v) && !indisponiveisIds.has(String(v.id))).length;
+      counter.textContent = `${totalIndisp} indisponível(is) • ${totalDisp} disp. (${totalTop10Disp} Top 10)`;
 
       if (btnRestaurar) {
         if (totalIndisp > 0) {
@@ -1710,13 +2048,16 @@
         return;
       }
 
+      const frotaOrdenada = ordenarFrotaComTop10(frotaUnidade, priorizarTop10Ativo());
+
       const listaFiltrada = termoFiltro
-        ? frotaUnidade.filter(v =>
+        ? frotaOrdenada.filter(v =>
             normalizarTexto(v.motorista).includes(termoFiltro) ||
             normalizarTexto(v.placa).includes(termoFiltro) ||
-            normalizarTexto(v.tipo).includes(termoFiltro)
+            normalizarTexto(v.tipo).includes(termoFiltro) ||
+            normalizarTexto(obterEtiquetaRanking(v)).includes(termoFiltro)
           )
-        : frotaUnidade;
+        : frotaOrdenada;
 
       if (listaFiltrada.length === 0) {
         container.innerHTML = `<p style="font-size:0.84rem; color: var(--text-soft); padding: 6px;">Nenhum motorista encontrado para "${termoFiltro}".</p>`;
@@ -1726,12 +2067,20 @@
       container.innerHTML = listaFiltrada.map(v => {
         const idStr = String(v.id);
         const isOff = indisponiveisIds.has(idStr);
+        const isTop = ehTop10(v);
         const capMax = capacidadeComTolerancia(v.capacidade);
+        const badgeHtml = isTop
+          ? `<span class="top10-badge mono">${obterEtiquetaRanking(v)}</span>`
+          : "";
+
         return `
-          <div class="driver-toggle ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
+          <div class="driver-toggle ${isTop ? "is-top10" : ""} ${isOff ? "unavailable" : ""}" onclick="alternarIndisponibilidade('${idStr}')">
             <div class="driver-toggle-text">
-              <b>${v.motorista}</b>
-              <span class="mono">${v.placa} • ${v.tipo} (${v.capacidade} cx | máx ${capMax})</span>
+              <div class="driver-name-line">
+                ${badgeHtml}
+                <b>${v.motorista}</b>
+              </div>
+              <span class="sub-info mono">${v.placa} • ${v.tipo} (${v.capacidade} cx | máx ${capMax})</span>
             </div>
             <span class="status-pill ${isOff ? "off" : "ok"}">${isOff ? "INDISPONÍVEL" : "DISPONÍVEL"}</span>
           </div>
@@ -1769,6 +2118,7 @@
       document.getElementById("veiculo-placa").value = "";
       document.getElementById("veiculo-tipo").value = "VAN";
       document.getElementById("veiculo-capacidade").value = "";
+      document.getElementById("veiculo-ranking").value = "";
       document.getElementById("btn-form-deletar").classList.add("hidden");
       document.getElementById("btn-form-editar-novo").classList.add("hidden");
     }
@@ -1784,6 +2134,7 @@
       document.getElementById("veiculo-placa").value = v.placa;
       document.getElementById("veiculo-tipo").value = v.tipo;
       document.getElementById("veiculo-capacidade").value = v.capacidade;
+      document.getElementById("veiculo-ranking").value = ehTop10(v) ? String(normalizarRanking(v.ranking)) : "";
 
       document.getElementById("btn-form-deletar").classList.remove("hidden");
       document.getElementById("btn-form-editar-novo").classList.remove("hidden");
@@ -1795,13 +2146,35 @@
       const placa = normalizarPlaca(document.getElementById("veiculo-placa").value);
       const tipo = document.getElementById("veiculo-tipo").value.toUpperCase().trim();
       const capacidade = Number(document.getElementById("veiculo-capacidade").value);
+      const ranking = normalizarRanking(document.getElementById("veiculo-ranking").value);
 
       if (!motorista || !placa || placa.length < 7 || !capacidade || capacidade <= 0) {
         mostrarToast("Preencha motorista, placa (7 caracteres) e caixas.");
         return;
       }
 
-      const veiculoObj = { id, motorista, placa, tipo, capacidade };
+      if (ranking !== null) {
+        frotaUnidade.forEach(v => {
+          if (String(v.id) !== String(id) && normalizarRanking(v.ranking) === ranking) {
+            v.ranking = null;
+          }
+        });
+      }
+
+      const veiculoObj = { id, motorista, placa, tipo, capacidade, ranking };
+
+      const mapaAtual = carregarMapaRankingLocal(unidadeAtual);
+      if (ranking !== null) {
+        Object.keys(mapaAtual).forEach(k => {
+          if (mapaAtual[k] === ranking) delete mapaAtual[k];
+        });
+        if (id) mapaAtual[`id:${id}`] = ranking;
+        mapaAtual[`placa:${placa}`] = ranking;
+      } else {
+        if (id) delete mapaAtual[`id:${id}`];
+        delete mapaAtual[`placa:${placa}`];
+      }
+      localStorage.setItem(obterChaveCacheRanking(unidadeAtual), JSON.stringify(mapaAtual));
 
       try {
         mostrarToast("Salvando no Google Drive...");
@@ -1815,7 +2188,7 @@
         });
         const json = await resp.json();
         if (json.status === "success") {
-          mostrarToast("Veículo salvo com sucesso!");
+          mostrarToast(ranking ? `Veículo salvo como TOP #${ranking}!` : "Veículo salvo com sucesso!");
           limparFormularioVeiculo();
           await carregarFrotaDaUnidade();
         } else {
@@ -1860,46 +2233,72 @@
     }
 
     function filtrarVeiculos() {
-      const termo = normalizarTexto(document.getElementById("campo-busca").value);
-      const filtrados = frotaUnidade.filter(v =>
-        normalizarTexto(v.motorista).includes(termo) ||
-        normalizarTexto(v.placa).includes(termo) ||
-        normalizarTexto(v.tipo).includes(termo)
-      );
+      const campo = document.getElementById("campo-busca");
+      const termo = normalizarTexto(campo ? campo.value : "");
+      const ordenada = ordenarFrotaComTop10(frotaUnidade, true);
+      const filtrados = termo
+        ? ordenada.filter(v =>
+            normalizarTexto(v.motorista).includes(termo) ||
+            normalizarTexto(v.placa).includes(termo) ||
+            normalizarTexto(v.tipo).includes(termo) ||
+            normalizarTexto(obterEtiquetaRanking(v)).includes(termo)
+          )
+        : ordenada;
       renderizarListaVeiculos(filtrados);
     }
 
     function renderizarListaVeiculos(lista) {
       const container = document.getElementById("lista-veiculos");
+      if (!container) return;
+
       if (!lista || lista.length === 0) {
         container.innerHTML = `<p style="text-align:center; color: var(--text-soft); padding: 18px;">Nenhum veículo encontrado nesta unidade.</p>`;
         return;
       }
 
-      container.innerHTML = lista.map(v => `
-        <div class="vehicle-item">
-          <div class="vehicle-info">
-            <div class="vehicle-title-row">
-              <span class="plate-badge mono">${v.placa}</span>
-              <strong>${v.motorista}</strong>
+      container.innerHTML = lista.map(v => {
+        const isTop = ehTop10(v);
+        const rankNum = normalizarRanking(v.ranking);
+        const badgeHtml = isTop
+          ? `<span class="top10-badge mono">${obterEtiquetaRanking(v)}</span>`
+          : `<span class="fila-geral-badge">Fila Geral</span>`;
+
+        const setasTop10 = isTop
+          ? `
+            <div class="rank-move-btns">
+              <button class="btn-rank-step" title="Subir no Top 10" ${rankNum <= 1 ? "disabled" : ""} onclick="moverPosicaoTop10('${v.id}', -1)">▲</button>
+              <button class="btn-rank-step" title="Descer no Top 10" ${rankNum >= 10 ? "disabled" : ""} onclick="moverPosicaoTop10('${v.id}', 1)">▼</button>
             </div>
-            <span>${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b> (até <b class="mono">${capacidadeComTolerancia(v.capacidade)} cx</b> com +5%)</span>
+          `
+          : "";
+
+        return `
+          <div class="vehicle-item ${isTop ? "is-top10" : ""}">
+            <div class="vehicle-info">
+              <div class="vehicle-title-row">
+                ${badgeHtml}
+                <span class="plate-badge mono">${v.placa}</span>
+                <strong>${v.motorista}</strong>
+              </div>
+              <span class="vehicle-sub">${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b> (até <b class="mono">${capacidadeComTolerancia(v.capacidade)} cx</b> com +5%)</span>
+            </div>
+            <div class="vehicle-item-btns">
+              ${setasTop10}
+              <button class="btn-mini btn-mini-edit" onclick="editarVeiculo('${v.id}')">
+                <i data-lucide="edit-3" size="14"></i> Editar
+              </button>
+              <button class="btn-mini btn-mini-del" onclick="deletarVeiculoPorId('${v.id}')">
+                <i data-lucide="trash-2" size="14"></i> Deletar
+              </button>
+            </div>
           </div>
-          <div class="vehicle-item-btns">
-            <button class="btn-mini btn-mini-edit" onclick="editarVeiculo('${v.id}')">
-              <i data-lucide="edit-3" size="14"></i> Editar
-            </button>
-            <button class="btn-mini btn-mini-del" onclick="deletarVeiculoPorId('${v.id}')">
-              <i data-lucide="trash-2" size="14"></i> Deletar
-            </button>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
       lucide.createIcons();
     }
 
     // =========================================================================
-    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA DO EXCEL + TOLERÂNCIA +5% + AJUSTE MANUAL
+    // MOTOR DE ROTEIRIZAÇÃO AUTOMÁTICA (TOP 10 PRIMEIRO + TOLERÂNCIA +5% + AJUSTE MANUAL)
     // =========================================================================
     function processarArquivoExcel(event) {
       const file = event.target.files[0];
@@ -1987,7 +2386,6 @@
           colEntregador = Math.max(rows[headerRowIdx].length, colPlaca + 1);
         }
 
-        // Carrega com ExcelJS para ler cores e gravar mantendo o layout original
         const wbExcelJs = new ExcelJS.Workbook();
         await wbExcelJs.xlsx.load(buffer.slice().buffer);
         const wsExcelJs = wbExcelJs.worksheets[0];
@@ -1999,7 +2397,6 @@
           const row = rows[i];
           const dtRaw = String(row[colDT] || "").trim();
 
-          // Ignora completamente linhas de TOTAL (ex: "TOTAL 12345678", "TOTAL R1", etc.)
           if (ehLinhaTotal(dtRaw, row)) {
             continue;
           }
@@ -2008,7 +2405,6 @@
           const cellExcelJs = wsExcelJs ? wsExcelJs.getRow(i + 1).getCell(colCX + 1) : null;
           const linhaTemAmarelo = cellExcelJs ? corEhAmarela(cellExcelJs.fill) : false;
 
-          // Linha real de entrega: possui DT numérica (6 a 10 dígitos) e não é linha amarela de resumo
           if (ehCodigoDTValido(dtRaw) && !linhaTemAmarelo) {
             if (!rotasMap.has(dtRaw)) {
               rotasMap.set(dtRaw, {
@@ -2025,7 +2421,6 @@
             continue;
           }
 
-          // Linha de resumo da rota (R1, R2, AS1, AS2 ou linha amarela sem DT numérica)
           if (ultimaRotaAtiva && (ehResumoRota(dtRaw) || linhaTemAmarelo || (!dtRaw && cxVal > 0))) {
             if (cxVal > 0) {
               ultimaRotaAtiva.valorResumoRota = cxVal;
@@ -2063,26 +2458,69 @@
 
         const veiculosDisponiveis = frotaUnidade
           .filter(v => !indisponiveisIds.has(String(v.id)))
-          .map(v => ({ ...v, usado: false }))
-          .sort((a, b) => a.capacidade - b.capacidade);
+          .map(v => ({ ...v, usado: false }));
 
-        // 1º: Tenta alocar dentro da capacidade nominal exata; se não couber, usa tolerância de até +5%
-        rotasConsolidadas.forEach(rota => {
-          let veiculoIdeal = veiculosDisponiveis.find(
-            v => !v.usado && Number(v.capacidade) >= rota.totalCaixas
+        const usarTop10 = priorizarTop10Ativo();
+
+        if (usarTop10) {
+          const top10Disponiveis = veiculosDisponiveis
+            .filter(ehTop10)
+            .sort((a, b) => normalizarRanking(a.ranking) - normalizarRanking(b.ranking));
+
+          const filaGeralDisponiveis = veiculosDisponiveis
+            .filter(v => !ehTop10(v))
+            .sort((a, b) => Number(a.capacidade) - Number(b.capacidade));
+
+          rotasConsolidadas.forEach(rota => {
+            let veiculoIdeal = top10Disponiveis.find(
+              v => !v.usado && Number(v.capacidade) >= rota.totalCaixas
+            );
+
+            if (!veiculoIdeal) {
+              veiculoIdeal = top10Disponiveis.find(
+                v => !v.usado && capacidadeComTolerancia(v.capacidade) >= rota.totalCaixas
+              );
+            }
+
+            if (!veiculoIdeal) {
+              veiculoIdeal = filaGeralDisponiveis.find(
+                v => !v.usado && Number(v.capacidade) >= rota.totalCaixas
+              );
+            }
+
+            if (!veiculoIdeal) {
+              veiculoIdeal = filaGeralDisponiveis.find(
+                v => !v.usado && capacidadeComTolerancia(v.capacidade) >= rota.totalCaixas
+              );
+            }
+
+            if (veiculoIdeal) {
+              veiculoIdeal.usado = true;
+              rota.veiculoAlocado = veiculoIdeal;
+            }
+          });
+        } else {
+          const ordenadosCapacidade = [...veiculosDisponiveis].sort(
+            (a, b) => Number(a.capacidade) - Number(b.capacidade)
           );
 
-          if (!veiculoIdeal) {
-            veiculoIdeal = veiculosDisponiveis.find(
-              v => !v.usado && capacidadeComTolerancia(v.capacidade) >= rota.totalCaixas
+          rotasConsolidadas.forEach(rota => {
+            let veiculoIdeal = ordenadosCapacidade.find(
+              v => !v.usado && Number(v.capacidade) >= rota.totalCaixas
             );
-          }
 
-          if (veiculoIdeal) {
-            veiculoIdeal.usado = true;
-            rota.veiculoAlocado = veiculoIdeal;
-          }
-        });
+            if (!veiculoIdeal) {
+              veiculoIdeal = ordenadosCapacidade.find(
+                v => !v.usado && capacidadeComTolerancia(v.capacidade) >= rota.totalCaixas
+              );
+            }
+
+            if (veiculoIdeal) {
+              veiculoIdeal.usado = true;
+              rota.veiculoAlocado = veiculoIdeal;
+            }
+          });
+        }
 
         const baseName = originalFileName.replace(/\.[^/.]+$/, "");
         nomeArquivoGerado = `${baseName}_ROTEIRIZADO_${unidadeAtual.replace(/\s+/g, "_")}.xlsx`;
@@ -2127,7 +2565,6 @@
         const veiculoEscolhido = frotaUnidade.find(v => String(v.id) === String(novoVeiculoId));
         if (!veiculoEscolhido) return;
 
-        // Evita duplicar o mesmo motorista em duas DTs simultaneamente
         let rotaAnteriorDesalocada = null;
         estadoRoteirizacaoAtual.rotas.forEach(r => {
           if (r.dt !== dtAlvo && r.veiculoAlocado && String(r.veiculoAlocado.id) === String(novoVeiculoId)) {
@@ -2224,7 +2661,9 @@
       const alocadas = totalRotas - naoAtendidas.length;
       const totalCaixasGeral = Math.round(rotas.reduce((acc, r) => acc + r.totalCaixas, 0) * 100) / 100;
 
-      // Mapeia qual DT está usando cada veículo para sinalizar no dropdown
+      const totalTop10Disp = frotaUnidade.filter(v => ehTop10(v) && !indisponiveisIds.has(String(v.id))).length;
+      const top10Escalados = rotas.filter(r => r.veiculoAlocado && ehTop10(r.veiculoAlocado)).length;
+
       const veiculoParaDT = new Map();
       rotas.forEach(r => {
         if (r.veiculoAlocado) {
@@ -2232,10 +2671,10 @@
         }
       });
 
-      const veiculosElegiveis = frotaUnidade
-        .filter(v => !indisponiveisIds.has(String(v.id)))
-        .slice()
-        .sort((a, b) => a.motorista.localeCompare(b.motorista));
+      const veiculosElegiveis = ordenarFrotaComTop10(
+        frotaUnidade.filter(v => !indisponiveisIds.has(String(v.id))),
+        true
+      );
 
       kpiGrid.innerHTML = `
         <div class="kpi-card">
@@ -2244,15 +2683,19 @@
         </div>
         <div class="kpi-card">
           <span class="kpi-label">Alocadas</span>
-          <span class="kpi-value mono" style="color: #A7F3D0;">${alocadas}</span>
+          <span class="kpi-value mono" style="color: #6EE7B7;">${alocadas}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Top 10 Escalados</span>
+          <span class="kpi-value mono" style="color: #FDE047;">${top10Escalados}/${totalTop10Disp}</span>
         </div>
         <div class="kpi-card">
           <span class="kpi-label">Sem Veículo</span>
-          <span class="kpi-value mono" style="color: ${naoAtendidas.length > 0 ? "#FCA5A5" : "#FFFFFF"};">${naoAtendidas.length}</span>
+          <span class="kpi-value mono" style="color: ${naoAtendidas.length > 0 ? "#FDA4AF" : "#F8FAFC"};">${naoAtendidas.length}</span>
         </div>
         <div class="kpi-card">
           <span class="kpi-label">Volume Total</span>
-          <span class="kpi-value mono">${totalCaixasGeral} cx</span>
+          <span class="kpi-value mono" style="color: #67E8F9;">${totalCaixasGeral} cx</span>
         </div>
       `;
 
@@ -2266,7 +2709,7 @@
       } else {
         alertBox.className = "alert-box alert-success";
         alertBox.innerHTML = `
-          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> estão alocadas (com tolerância de até +5% de capacidade).
+          ✅ <b>ROTEIRIZAÇÃO CONCLUÍDA:</b> Todas as <b>${rotas.length} rotas (DTs)</b> da unidade <b>${unidadeAtual}</b> estão alocadas (${priorizarTop10Ativo() ? "priorizando o Ranking Top 10 e " : ""}com tolerância de até +5% de capacidade).
         `;
       }
 
@@ -2277,9 +2720,10 @@
           const idV = String(v.id);
           const dtEmUso = veiculoParaDT.get(idV);
           const capMax = capacidadeComTolerancia(v.capacidade);
+          const prefixoRank = ehTop10(v) ? `[${obterEtiquetaRanking(v)}] ` : "";
           const emOutraDT = dtEmUso && dtEmUso !== r.dt ? ` [em uso DT ${dtEmUso}]` : "";
           const acimaTol = r.totalCaixas > capMax ? " ⚠️" : "";
-          return `<option value="${idV}" ${idV === idSelecionado ? "selected" : ""}>${v.motorista} • ${v.capacidade} cx (máx ${capMax})${emOutraDT}${acimaTol}</option>`;
+          return `<option value="${idV}" ${idV === idSelecionado ? "selected" : ""}>${prefixoRank}${v.motorista} • ${v.capacidade} cx (máx ${capMax})${emOutraDT}${acimaTol}</option>`;
         }).join("");
 
         const selectHtml = `
@@ -2303,12 +2747,16 @@
             statusBadge = `<span class="tag-tol">+${pctExtra}% TOLERÂNCIA</span>`;
           }
 
+          const rankTag = ehTop10(r.veiculoAlocado)
+            ? `<span class="top10-badge mono" style="margin-right: 6px;">${obterEtiquetaRanking(r.veiculoAlocado)}</span>`
+            : "";
+
           return `
             <tr>
               <td class="mono"><b>${r.dt}</b></td>
               <td class="mono"><b>${r.totalCaixas} cx</b></td>
               <td><span class="plate-badge mono">${normalizarPlaca(r.veiculoAlocado.placa)}</span></td>
-              <td>${selectHtml}</td>
+              <td>${rankTag}${selectHtml}</td>
               <td class="mono">${capBase} cx <span style="color: var(--text-soft);">(máx ${capMax})</span></td>
               <td>${statusBadge}</td>
             </tr>
