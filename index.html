@@ -374,7 +374,14 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      width: 64px;
+      flex-shrink: 0;
       margin-right: 2px;
+    }
+
+    .rank-spacer {
+      visibility: hidden;
+      pointer-events: none;
     }
 
     .btn-rank-step {
@@ -605,6 +612,7 @@
       color: #E7D8C9;
       padding: 0 12px;
       border-radius: 999px;
+      white-space: nowrap;
     }
 
     .btn-reset-drivers {
@@ -1228,6 +1236,10 @@
         padding-top: 10px;
         border-top: 1px solid rgba(255, 122, 26, 0.16);
       }
+
+      .rank-spacer {
+        display: none;
+      }
     }
 
     .vehicle-item.is-top10 {
@@ -1660,6 +1672,7 @@
             <span class="panel-title-icon"><i data-lucide="search" size="18"></i></span>
             <span>Frota Cadastrada &amp; Ranking #1 a #10</span>
           </div>
+          <span id="fleet-summary-pill" class="availability-summary mono">Total: 0 • 0 Ranqueados • 0 Fila Geral</span>
         </div>
 
         <div class="search-box">
@@ -2240,6 +2253,16 @@
         return;
       }
 
+      // Trava de placa duplicada na mesma unidade
+      const placaDuplicada = frotaUnidade.find(
+        v => String(v.id) !== String(id) && normalizarPlaca(v.placa) === placa
+      );
+      if (placaDuplicada) {
+        mostrarToast(`Placa ${placa} já cadastrada para ${placaDuplicada.motorista}!`);
+        document.getElementById("veiculo-placa").focus();
+        return;
+      }
+
       if (ranking !== null) {
         frotaUnidade.forEach(v => {
           if (String(v.id) !== String(id) && normalizarRanking(v.ranking) === ranking) {
@@ -2319,7 +2342,17 @@
       }
     }
 
+    function atualizarResumoFrota() {
+      const summaryPill = document.getElementById("fleet-summary-pill");
+      if (!summaryPill) return;
+      const total = frotaUnidade.length;
+      const ranqueados = frotaUnidade.filter(ehTop10).length;
+      const filaGeral = Math.max(0, total - ranqueados);
+      summaryPill.textContent = `Total: ${total} • ${ranqueados} Ranqueado(s) • ${filaGeral} Fila Geral`;
+    }
+
     function filtrarVeiculos() {
+      atualizarResumoFrota();
       const campo = document.getElementById("campo-busca");
       const termo = normalizarTexto(campo ? campo.value : "");
       const ordenada = ordenarFrotaComTop10(frotaUnidade, true);
@@ -2358,7 +2391,7 @@
               <button class="btn-rank-step" title="Descer posição" ${rankNum >= 10 ? "disabled" : ""} onclick="moverPosicaoTop10('${v.id}', 1)">▼</button>
             </div>
           `
-          : "";
+          : `<div class="rank-move-btns rank-spacer" aria-hidden="true"></div>`;
 
         return `
           <div class="vehicle-item ${isTop ? "is-top10" : ""}">
