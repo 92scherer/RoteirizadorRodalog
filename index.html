@@ -368,19 +368,23 @@
     .rank-move-btns {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
+      margin-right: 2px;
     }
 
     .btn-rank-step {
+      height: 36px;
+      width: 28px;
       background: rgba(245, 158, 11, 0.18);
       border: 1px solid rgba(251, 191, 36, 0.48);
       color: #FDE047;
-      border-radius: 6px;
-      padding: 3px 7px;
-      font-size: 0.68rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
       font-weight: 800;
       cursor: pointer;
-      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: background 0.15s ease;
     }
 
@@ -733,6 +737,9 @@
       font-size: 0.76rem;
       color: var(--text-soft);
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .status-pill {
@@ -1121,7 +1128,7 @@
       transform: translateY(-1px);
     }
 
-    /* LISTA / BUSCA DE VEÍCULOS */
+    /* LISTA / BUSCA DE VEÍCULOS — ALINHAMENTO MILIMÉTRICO DOS BOTÕES */
     .search-box {
       width: 100%;
       margin-bottom: 16px;
@@ -1168,13 +1175,26 @@
       background: var(--glass-elevated);
       border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: var(--radius-md);
-      padding: 14px 16px;
-      display: flex;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 16px;
       transition: border-color 0.16s ease, background 0.16s ease;
+    }
+
+    @media (max-width: 540px) {
+      .vehicle-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .vehicle-item-btns {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 10px;
+        border-top: 1px solid rgba(56, 189, 248, 0.14);
+      }
     }
 
     .vehicle-item.is-top10 {
@@ -1190,7 +1210,8 @@
     .vehicle-info {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
+      min-width: 0;
     }
 
     .vehicle-title-row {
@@ -1198,6 +1219,7 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      min-width: 0;
     }
 
     .plate-badge {
@@ -1209,6 +1231,7 @@
       font-size: 0.82rem;
       font-weight: 800;
       letter-spacing: 0.5px;
+      flex-shrink: 0;
     }
 
     .vehicle-info strong {
@@ -1221,26 +1244,32 @@
       font-size: 0.82rem;
       color: var(--text-soft);
       font-weight: 600;
+      line-height: 1.35;
     }
 
     .vehicle-item-btns {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-shrink: 0;
     }
 
     .btn-mini {
-      padding: 8px 12px;
+      height: 36px;
+      min-width: 98px;
+      padding: 0 13px;
       border-radius: 9px;
       border: 1px solid transparent;
       font-size: 0.76rem;
       font-weight: 800;
       cursor: pointer;
       text-transform: uppercase;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
       transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
     }
 
@@ -1691,6 +1720,23 @@
         .trim();
     }
 
+    // Corrige auto-conversão de "3/4" para data pelo Google Sheets (ex: "FRI APR 03 2026...")
+    function normalizarTipoVeiculo(tipoRaw) {
+      const str = String(tipoRaw || "").trim();
+      if (!str) return "VAN";
+      const upper = str.toUpperCase();
+      if (
+        upper.includes("GMT") ||
+        upper.includes("HORÁRIO PADRÃO") ||
+        upper.includes("HORARIO PADRAO") ||
+        /^\d{4}-\d{2}-\d{2}/.test(upper) ||
+        /(APR\s*03|MAR\s*04|03\/04|04\/03)/.test(upper)
+      ) {
+        return "3/4";
+      }
+      return upper;
+    }
+
     function capacidadeComTolerancia(capacidadeBase) {
       return Math.round(Number(capacidadeBase || 0) * TOLERANCIA_CAPACIDADE * 100) / 100;
     }
@@ -1766,7 +1812,11 @@
             posicoesOcupadas.add(rank);
           }
         }
-        return { ...v, ranking: rank };
+        return {
+          ...v,
+          tipo: normalizarTipoVeiculo(v.tipo),
+          ranking: rank
+        };
       });
     }
 
@@ -2132,7 +2182,7 @@
       document.getElementById("veiculo-id").value = v.id;
       document.getElementById("veiculo-motorista").value = v.motorista;
       document.getElementById("veiculo-placa").value = v.placa;
-      document.getElementById("veiculo-tipo").value = v.tipo;
+      document.getElementById("veiculo-tipo").value = normalizarTipoVeiculo(v.tipo);
       document.getElementById("veiculo-capacidade").value = v.capacidade;
       document.getElementById("veiculo-ranking").value = ehTop10(v) ? String(normalizarRanking(v.ranking)) : "";
 
@@ -2144,7 +2194,7 @@
       const id = document.getElementById("veiculo-id").value.trim();
       const motorista = document.getElementById("veiculo-motorista").value.toUpperCase().trim();
       const placa = normalizarPlaca(document.getElementById("veiculo-placa").value);
-      const tipo = document.getElementById("veiculo-tipo").value.toUpperCase().trim();
+      const tipo = normalizarTipoVeiculo(document.getElementById("veiculo-tipo").value);
       const capacidade = Number(document.getElementById("veiculo-capacidade").value);
       const ranking = normalizarRanking(document.getElementById("veiculo-ranking").value);
 
@@ -2259,6 +2309,7 @@
       container.innerHTML = lista.map(v => {
         const isTop = ehTop10(v);
         const rankNum = normalizarRanking(v.ranking);
+        const tipoLimpo = normalizarTipoVeiculo(v.tipo);
         const badgeHtml = isTop
           ? `<span class="top10-badge mono">${obterEtiquetaRanking(v)}</span>`
           : `<span class="fila-geral-badge">Fila Geral</span>`;
@@ -2280,7 +2331,7 @@
                 <span class="plate-badge mono">${v.placa}</span>
                 <strong>${v.motorista}</strong>
               </div>
-              <span class="vehicle-sub">${v.tipo} — Capacidade média: <b class="mono">${v.capacidade} cx</b> (até <b class="mono">${capacidadeComTolerancia(v.capacidade)} cx</b> com +5%)</span>
+              <span class="vehicle-sub">${tipoLimpo} — Capacidade média: <b class="mono">${v.capacidade} cx</b> (até <b class="mono">${capacidadeComTolerancia(v.capacidade)} cx</b> com +5%)</span>
             </div>
             <div class="vehicle-item-btns">
               ${setasTop10}
